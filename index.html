@@ -822,7 +822,7 @@ function parseGroq(raw){
 function callSection(topicName,sectionLabel,instruction){
   var sys='You are a financial intelligence analyst. Return ONLY a JSON object with exactly these keys: hl, bl, ins, dd. No markdown. No backticks. No extra text. All string values must be single continuous lines with no line breaks inside them.';
   var usr='Topic: '+topicName+'\nSection: '+sectionLabel+'\n\n'+instruction+'\n\nReturn ONLY this JSON (fill in real content, all on single lines):\n{"hl":"specific headline here","bl":["bullet one here","bullet two here","bullet three here"],"ins":"insight paragraph here","dd":"deep dive paragraph here"}';
-  return fetch('/.netlify/functions/groq-proxy',{
+  return fetch('/api/groq-proxy',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
