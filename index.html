@@ -872,52 +872,60 @@ function loadTopic() {
   var ebx = document.getElementById('ebx');
   rb.disabled = true; rb.classList.add('spin');
   ldr.classList.add('on'); ebx.classList.remove('on');
+
+  // Skeleton cards immediately — one per section, preserves layout
   showSkel(key);
+
   var mi = 0, iv = setInterval(function() {
     mi = (mi+1) % MSGS.length;
     document.getElementById('lTxt').textContent = MSGS[mi];
-  }, 2500);
+  }, 2000);
 
-  // Sequential queue — calls fire one after another with 800ms gap
-  // Prevents rate limit spikes vs parallel Promise.all
-  var results = [];
-  function runNext(idx) {
-    if (idx >= t.prompts.length) {
-      // All done
-      clearInterval(iv);
-      ldr.classList.remove('on');
-      rb.disabled = false; rb.classList.remove('spin');
-      var merged = {};
-      results.forEach(function(r, i) {
-        merged['s'+i] = Object.assign({ lbl: t.prompts[i].lbl }, r);
-      });
-      var rArr = t.reflect;
-      merged.reflectQ = rArr[new Date().getDay() % rArr.length];
-      // Save to cache
-      saveToCache(key, merged);
-      lastCacheTs = Date.now();
-      updateCacheUI(true, lastCacheTs);
-      document.getElementById('rfQ').textContent = merged.reflectQ;
-      renderContent(key, merged);
-      return;
-    }
-    var p = t.prompts[idx];
-    callSection(t.name, p.lbl, p.q)
-    .then(function(r) {
-      results.push(r);
-      setTimeout(function() { runNext(idx + 1); }, 600);
-    })
-    .catch(function(err) {
-      clearInterval(iv);
-      ldr.classList.remove('on');
-      rb.disabled = false; rb.classList.remove('spin');
-      var eb = document.getElementById('ebx');
-      eb.classList.add('on');
-      eb.textContent = 'Could not load briefing: ' + err.message + ' — Tap Refresh to try again.';
-      document.getElementById('contentStack').innerHTML = '';
-    });
+  // Parallel + progressive — all 4 calls fire simultaneously
+  // Each section renders the moment its call completes
+  var merged = {};
+  var completed = 0;
+  var total = t.prompts.length;
+  var hasError = false;
+
+  function onAllDone() {
+    clearInterval(iv);
+    ldr.classList.remove('on');
+    rb.disabled = false; rb.classList.remove('spin');
+    var rArr = t.reflect;
+    merged.reflectQ = rArr[new Date().getDay() % rArr.length];
+    saveToCache(key, merged);
+    lastCacheTs = Date.now();
+    updateCacheUI(true, lastCacheTs);
+    document.getElementById('rfQ').textContent = merged.reflectQ;
   }
-  runNext(0);
+
+  function onSectionError(err) {
+    if (hasError) return;
+    hasError = true;
+    clearInterval(iv);
+    ldr.classList.remove('on');
+    rb.disabled = false; rb.classList.remove('spin');
+    var eb = document.getElementById('ebx');
+    eb.classList.add('on');
+    eb.textContent = 'Could not load briefing: ' + err.message + ' — Tap Refresh to try again.';
+  }
+
+  // 200ms stagger between call starts — avoids exact simultaneous burst
+  t.prompts.forEach(function(p, idx) {
+    setTimeout(function() {
+      if (hasError) return;
+      callSection(t.name, p.lbl, p.q)
+      .then(function(r) {
+        if (hasError) return;
+        merged['s'+idx] = Object.assign({ lbl: p.lbl }, r);
+        renderSingleCard(key, idx, r, p);
+        completed++;
+        if (completed === total) onAllDone();
+      })
+      .catch(function(err) { onSectionError(err); });
+    }, idx * 200);
+  });
 }
 
 function showSkel(key) {
@@ -930,6 +938,71 @@ function showSkel(key) {
       + '<div class="bcard-insights-zone"><div class="sk w30" style="height:9px;margin-bottom:16px"></div><div class="sk w90" style="height:12px;margin-bottom:8px"></div><div class="sk w80" style="height:12px;margin-bottom:8px"></div><div class="sk w70" style="height:12px"></div></div>';
     g.appendChild(d);
   }
+}
+
+// ═══════════════════════════════════════════════
+// PROGRESSIVE RENDER — replaces individual skeleton card
+// ═══════════════════════════════════════════════
+function renderSingleCard(key, idx, sec, p) {
+  var t = TOPICS[key];
+  var g = document.getElementById('contentStack');
+  // Get the skeleton card at this index position
+  var skels = g.querySelectorAll('.bcard');
+  var target = skels[idx];
+  if (!target) return;
+
+  var svKey = key + '_' + idx;
+  var isSv = savedItems[svKey];
+
+  var buls = (sec.bl || []).map(function(b) {
+    return '<li style="--bcolor:'+t.color+'">' + b + '</li>';
+  }).join('');
+
+  // Fade out skeleton
+  target.style.transition = 'opacity .2s ease';
+  target.style.opacity = '0';
+
+  setTimeout(function() {
+    target.innerHTML =
+      '<div class="bcard-accent" style="background:'+t.rule+'"></div>'
+      + '<div class="bcard-headline-zone">'
+        + '<div class="bcard-section-label" style="color:'+t.color+'">' + p.lbl + '</div>'
+        + (sec.hl ? '<div class="bcard-headline">' + sec.hl + '</div>' : '')
+      + '</div>'
+      + '<div class="bcard-insights-zone">'
+        + '<div class="bcard-insights-label">Key insights</div>'
+        + (buls ? '<ul class="bcard-insights-list">' + buls + '</ul>' : '')
+      + '</div>'
+      + (sec.ins ? '<div class="bcard-leadership-zone">'
+        + '<div class="bcard-leadership-tag" style="color:'+t.color+';"><span style="width:14px;height:1px;background:'+t.color+';display:inline-block;"></span>Leadership angle</div>'
+        + '<div class="bcard-leadership-txt">' + sec.ins + '</div>'
+      + '</div>' : '')
+      + (sec.rq ? '<div class="bcard-reflect-zone">'
+        + '<div class="bcard-reflect-tag">Reflect on this</div>'
+        + '<div class="bcard-reflect-q">' + sec.rq + '</div>'
+      + '</div>' : '')
+      + '<div class="bcard-actions-zone">'
+        + '<button class="ddtog" onclick="togDD(this,'dd_'+key+'_'+idx+'',this.closest('.bcard'))">'
+          + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'
+          + 'Deep Dive'
+        + '</button>'
+        + '<button class="act-save'+(isSv?' sv':'')+'" onclick="toggleSave(''+svKey+'',''+key+'','+idx+',this)" title="Save">&#128278;</button>'
+        + '<button class="shbtn wa" onclick="doWA(''+key+'','+idx+')">&#128242; WhatsApp</button>'
+        + '<button class="shbtn" onclick="doCopy(''+key+'','+idx+')">&#128203; Copy</button>'
+      + '</div>'
+      + '<div class="ddc" id="dd_'+key+'_'+idx+'"></div>';
+
+    target._ddData = sec.dd || null;
+
+    // Fade in with upward motion
+    target.style.transform = 'translateY(12px)';
+    target.style.opacity = '0';
+    requestAnimationFrame(function() {
+      target.style.transition = 'opacity .4s cubic-bezier(.16,1,.3,1), transform .4s cubic-bezier(.16,1,.3,1)';
+      target.style.opacity = '1';
+      target.style.transform = 'translateY(0)';
+    });
+  }, 150);
 }
 
 // ═══════════════════════════════════════════════
