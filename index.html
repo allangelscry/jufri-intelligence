@@ -946,55 +946,51 @@ function showSkel(key) {
 function renderSingleCard(key, idx, sec, p) {
   var t = TOPICS[key];
   var g = document.getElementById('contentStack');
-  // Get the skeleton card at this index position
   var skels = g.querySelectorAll('.bcard');
   var target = skels[idx];
   if (!target) return;
-
   var svKey = key + '_' + idx;
   var isSv = savedItems[svKey];
-
   var buls = (sec.bl || []).map(function(b) {
-    return '<li style="--bcolor:'+t.color+'">' + b + '</li>';
+    return '<li style="--bcolor:' + t.color + '">' + b + '</li>';
   }).join('');
-
-  // Fade out skeleton
   target.style.transition = 'opacity .2s ease';
   target.style.opacity = '0';
-
   setTimeout(function() {
-    target.innerHTML =
-      '<div class="bcard-accent" style="background:'+t.rule+'"></div>'
-      + '<div class="bcard-headline-zone">'
-        + '<div class="bcard-section-label" style="color:'+t.color+'">' + p.lbl + '</div>'
-        + (sec.hl ? '<div class="bcard-headline">' + sec.hl + '</div>' : '')
-      + '</div>'
-      + '<div class="bcard-insights-zone">'
-        + '<div class="bcard-insights-label">Key insights</div>'
-        + (buls ? '<ul class="bcard-insights-list">' + buls + '</ul>' : '')
-      + '</div>'
-      + (sec.ins ? '<div class="bcard-leadership-zone">'
-        + '<div class="bcard-leadership-tag" style="color:'+t.color+';"><span style="width:14px;height:1px;background:'+t.color+';display:inline-block;"></span>Leadership angle</div>'
-        + '<div class="bcard-leadership-txt">' + sec.ins + '</div>'
-      + '</div>' : '')
-      + (sec.rq ? '<div class="bcard-reflect-zone">'
-        + '<div class="bcard-reflect-tag">Reflect on this</div>'
-        + '<div class="bcard-reflect-q">' + sec.rq + '</div>'
-      + '</div>' : '')
-      + '<div class="bcard-actions-zone">'
-        + '<button class="ddtog" onclick="togDD(this,'dd_'+key+'_'+idx+'',this.closest('.bcard'))">'
-          + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'
-          + 'Deep Dive'
-        + '</button>'
-        + '<button class="act-save'+(isSv?' sv':'')+'" onclick="toggleSave(''+svKey+'',''+key+'','+idx+',this)" title="Save">&#128278;</button>'
-        + '<button class="shbtn wa" onclick="doWA(''+key+'','+idx+')">&#128242; WhatsApp</button>'
-        + '<button class="shbtn" onclick="doCopy(''+key+'','+idx+')">&#128203; Copy</button>'
-      + '</div>'
-      + '<div class="ddc" id="dd_'+key+'_'+idx+'"></div>';
-
+    var ddId = 'dd_' + key + '_' + idx;
+    var saveClass = 'act-save' + (isSv ? ' sv' : '');
+    var html = '<div class="bcard-accent" style="background:' + t.rule + '"></div>';
+    html += '<div class="bcard-headline-zone">';
+    html += '<div class="bcard-section-label" style="color:' + t.color + '">' + p.lbl + '</div>';
+    if (sec.hl) html += '<div class="bcard-headline">' + sec.hl + '</div>';
+    html += '</div>';
+    html += '<div class="bcard-insights-zone">';
+    html += '<div class="bcard-insights-label">Key insights</div>';
+    if (buls) html += '<ul class="bcard-insights-list">' + buls + '</ul>';
+    html += '</div>';
+    if (sec.ins) {
+      html += '<div class="bcard-leadership-zone">';
+      html += '<div class="bcard-leadership-tag" style="color:' + t.color + '"><span style="width:14px;height:1px;background:' + t.color + ';display:inline-block;"></span>Leadership angle</div>';
+      html += '<div class="bcard-leadership-txt">' + sec.ins + '</div>';
+      html += '</div>';
+    }
+    if (sec.rq) {
+      html += '<div class="bcard-reflect-zone">';
+      html += '<div class="bcard-reflect-tag">Reflect on this</div>';
+      html += '<div class="bcard-reflect-q">' + sec.rq + '</div>';
+      html += '</div>';
+    }
+    html += '<div class="bcard-actions-zone">';
+    html += '<button class="ddtog" onclick="togDD(this,\'' + ddId + '\',this.closest(\'.bcard\'))">';
+    html += '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
+    html += 'Deep Dive</button>';
+    html += '<button class="' + saveClass + '" onclick="toggleSave(\'' + svKey + '\',\'' + key + '\',' + idx + ',this)" title="Save">&#128278;</button>';
+    html += '<button class="shbtn wa" onclick="doWA(\'' + key + '\',' + idx + ')">&#128242; WhatsApp</button>';
+    html += '<button class="shbtn" onclick="doCopy(\'' + key + '\',' + idx + ')">&#128203; Copy</button>';
+    html += '</div>';
+    html += '<div class="ddc" id="' + ddId + '"></div>';
+    target.innerHTML = html;
     target._ddData = sec.dd || null;
-
-    // Fade in with upward motion
     target.style.transform = 'translateY(12px)';
     target.style.opacity = '0';
     requestAnimationFrame(function() {
@@ -1004,7 +1000,1294 @@ function renderSingleCard(key, idx, sec, p) {
     });
   }, 150);
 }
+// ═══════════════════════════════════════════════
+// RENDER — NEW 4-PART FORMAT
+// ═══════════════════════════════════════════════
+function renderContent(key, data) {
+  var g = document.getElementById('contentStack'); g.innerHTML = '';
+  var t = TOPICS[key];
+  t.prompts.forEach(function(p, i) {
+    var sec = data['s'+i] || {};
+    var svKey = key + '_' + i;
+    var isSv = savedItems[svKey];
+    var d = document.createElement('div');
+    d.className = 'bcard';
+    d.style.opacity = '0';
+    d.style.transform = 'translateY(18px)';
 
+    // Build bullets
+    var buls = (sec.bl || []).map(function(b) {
+      return '<li style="--bcolor:'+t.color+'">' + b + '</li>';
+    }).join('');
+
+    // Build card HTML — 4-zone structure
+    d.innerHTML =
+      '<div class="bcard-accent" style="background:'+t.rule+'"></div>'
+
+      // ZONE 1 — Headline
+      + '<div class="bcard-headline-zone">'
+        + '<div class="bcard-section-label" style="color:'+t.color+'">' + p.lbl + '</div>'
+        + (sec.hl ? '<div class="bcard-headline">' + sec.hl + '</div>' : '')
+      + '</div>'
+
+      // ZONE 2 — Key insights
+      + '<div class="bcard-insights-zone">'
+        + '<div class="bcard-insights-label">Key insights</div>'
+        + (buls ? '<ul class="bcard-insights-list">' + buls + '</ul>' : '')
+      + '</div>'
+
+      // ZONE 3 — Leadership angle
+      + (sec.ins ? '<div class="bcard-leadership-zone">'
+        + '<div class="bcard-leadership-tag" style="color:'+t.color+';"><span style="width:14px;height:1px;background:'+t.color+';display:inline-block;"></span>Leadership angle</div>'
+        + '<div class="bcard-leadership-txt">' + sec.ins + '</div>'
+      + '</div>' : '')
+
+      // ZONE 4 — Reflection question
+      + (sec.rq ? '<div class="bcard-reflect-zone">'
+        + '<div class="bcard-reflect-tag">Reflect on this</div>'
+        + '<div class="bcard-reflect-q">' + sec.rq + '</div>'
+      + '</div>' : '')
+
+      // ACTIONS + DEEP DIVE TOGGLE
+      + '<div class="bcard-actions-zone">'
+        + '<button class="ddtog" onclick="togDD(this,\'dd_'+key+'_'+i+'\',this.closest(\'.bcard\'))">'
+          + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'
+          + 'Deep Dive'
+        + '</button>'
+        + '<button class="act-save'+(isSv?' sv':'')+'" onclick="toggleSave(\''+svKey+'\',\''+key+'\','+i+',this)" title="Save">🔖</button>'
+        + '<button class="shbtn wa" onclick="doWA(\''+key+'\','+i+')">📲 WhatsApp</button>'
+        + '<button class="shbtn" onclick="doCopy(\''+key+'\','+i+')">📋 Copy</button>'
+      + '</div>'
+
+      // DEEP DIVE CONTENT
+      + '<div class="ddc" id="dd_'+key+'_'+i+'"></div>';
+
+    // Store deep dive data on element
+    d._ddData = sec.dd || null;
+    g.appendChild(d);
+    setTimeout((function(el) { return function() {
+      el.style.transition = 'opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }; })(d), 80 + i * 100);
+  });
+}
+
+function togDD(btn, id, card) {
+  btn.classList.toggle('open');
+  var c = document.getElementById(id);
+  c.classList.toggle('on');
+  if (c.classList.contains('on') && !c.innerHTML.trim()) {
+    var ddData = card && card._ddData;
+    if (ddData) {
+      var paras = ddData.split(/\.\s+(?=[A-Z])/).filter(function(p) { return p.trim(); })
+        .map(function(p) { return p.trim().endsWith('.') ? p.trim() : p.trim() + '.'; });
+      c.innerHTML = '<div class="ddt">' + paras.map(function(p) { return '<p>' + p + '</p>'; }).join('') + '</div>';
+    } else {
+      c.innerHTML = '<div class="ddt"><p>Deep dive not available. Refresh to load.</p></div>';
+    }
+  }
+}
+
+function toggleSave(svKey, topicKey, idx, btn) {
+  var cached = loadFromCache(topicKey);
+  var data = cached ? cached.data : null;
+  if (savedItems[svKey]) {
+    delete savedItems[svKey]; btn.classList.remove('sv'); toast('Removed from saved.');
+  } else {
+    var sec = data && data['s'+idx];
+    var t = TOPICS[topicKey];
+    if (sec) {
+      savedItems[svKey] = { topic: t.name, lbl: t.prompts[idx].lbl, hl: sec.hl, bl: sec.bl, ins: sec.ins, date: new Date().toLocaleDateString() };
+      btn.classList.add('sv'); toast('Saved to reading list!');
+    }
+  }
+}
+
+function doWA(key, idx) {
+  var cached = loadFromCache(key);
+  var data = cached ? cached.data : null;
+  var sec = data && data['s'+idx];
+  var t = TOPICS[key];
+  if (!sec) return;
+  var txt = '*' + t.name + ' — ' + t.prompts[idx].lbl + '*\n\n'
+    + '📌 ' + sec.hl + '\n\n'
+    + (sec.bl||[]).map(function(b) { return '• ' + b; }).join('\n')
+    + '\n\n💡 ' + (sec.ins||'')
+    + '\n\n_Shared from Finance Intelligence Platform_';
+  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+}
+
+function doCopy(key, idx) {
+  var cached = loadFromCache(key);
+  var data = cached ? cached.data : null;
+  var sec = data && data['s'+idx];
+  var t = TOPICS[key];
+  if (!sec) return;
+  var txt = t.name + ' — ' + t.prompts[idx].lbl + '\n\n'
+    + sec.hl + '\n\n'
+    + (sec.bl||[]).map(function(b) { return '• ' + b; }).join('\n')
+    + '\n\nLeadership angle: ' + (sec.ins||'');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(function() { toast('Copied!'); }).catch(function() { toast('Copy failed.'); });
+  }
+}
+
+function saveRef() {
+  var q = document.getElementById('rfQ').textContent;
+  var a = document.getElementById('rfTa').value.trim();
+  if (!a) { toast('Write something first!'); return; }
+  refs.push({ topic: currentTopic ? TOPICS[currentTopic].name : 'General', q: q, a: a, date: new Date().toLocaleDateString() });
+  document.getElementById('rfTa').value = '';
+  toast('Reflection saved!');
+}
+
+// ═══════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════
+function openMdl(id) { document.getElementById('mdl'+id.charAt(0).toUpperCase()+id.slice(1)).classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeMdl(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+function bgClose(e, id) { if (e.target === document.getElementById(id)) closeMdl(id); }
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { document.querySelectorAll('.moverlay.open').forEach(function(m) { m.classList.remove('open'); }); document.body.style.overflow = ''; }});
+
+// ═══════════════════════════════════════════════
+// FEEDBACK
+// ═══════════════════════════════════════════════
+var fbRating = 0, fbTypes = [];
+function setRating(v) { fbRating = v; document.querySelectorAll('.fb-star').forEach(function(s) { s.classList.toggle('on', parseInt(s.dataset.v) <= v); }); }
+function togChip(el) { el.classList.toggle('on'); var t = el.textContent.trim(), i = fbTypes.indexOf(t); if (i > -1) fbTypes.splice(i,1); else fbTypes.push(t); }
+function submitFb() {
+  var name = document.getElementById('fbName').value.trim() || 'Anonymous';
+  var msg = document.getElementById('fbMsg').value.trim();
+  if (!msg) { toast('Please write your feedback first!'); return; }
+  var btn = document.getElementById('fbSub'); btn.disabled = true; btn.textContent = 'Sending...';
+  var stars = '★'.repeat(fbRating) + '☆'.repeat(5-fbRating);
+  var secs = []; document.querySelectorAll('#fbSecs .fb-chip.on').forEach(function(s) { secs.push(s.textContent.trim()); });
+  var body = 'Name: '+name+'%0ARating: '+stars+'%0AType: '+(fbTypes.length?fbTypes.join(', '):'N/A')+'%0ATopics: '+(secs.length?secs.join(', '):'N/A')+'%0A%0A'+encodeURIComponent(msg);
+  window.open('mailto:jfr.sitompul@gmail.com?subject='+encodeURIComponent('[Finance Intelligence Platform] Feedback from '+name+' — '+stars)+'&body='+body,'_blank');
+  setTimeout(function() {
+    document.getElementById('fbForm').style.display = 'none';
+    document.getElementById('fbOk').classList.add('show');
+    btn.disabled = false; btn.textContent = 'Send Feedback to Jufri';
+    fbRating = 0; fbTypes = [];
+    document.querySelectorAll('.fb-star,.fb-chip').forEach(function(s) { s.classList.remove('on'); });
+    document.getElementById('fbName').value = ''; document.getElementById('fbMsg').value = '';
+  }, 800);
+}
+
+function toast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2800); }
+
+// ═══════════════════════════════════════════════
+// LEARNING PATH (unchanged from original)
+// ═══════════════════════════════════════════════
+var pathData = { track: null, completed: {}, streak: 0, startDate: null };
+var currentPhase = 0;
+var TRACKS = {
+  leader:{name:'Future Leader',phases:[{weeks:[{week:1,theme:'Understanding Your Leadership Style',days:[{day:1,topic:'led',focus:'What kind of leader are you today vs. who you need to become'},{day:2,topic:'sdf',focus:'The daily habits of high-performing finance leaders'},{day:3,topic:'led',focus:'How to give feedback that actually changes behavior'}]},{week:2,theme:'Team Dynamics & Trust',days:[{day:4,topic:'led',focus:'Building psychological safety in banking teams'},{day:5,topic:'sdf',focus:'Deep work — how to protect your thinking time'},{day:6,topic:'led',focus:'Managing up: how to influence without authority'}]},{week:3,theme:'Strategic Thinking',days:[{day:7,topic:'fin',focus:'How top banking leaders read the market'},{day:8,topic:'led',focus:'Decision-making frameworks under uncertainty'},{day:9,topic:'geo',focus:'Geopolitics as a leadership intelligence skill'}]},{week:4,theme:'Month 1 Review',days:[{day:10,topic:'led',focus:'Leadership self-assessment'},{day:11,topic:'sdf',focus:'Refining your personal development system'},{milestone:true,day:30,text:'🏆 Day 30 Milestone: Foundation Complete!'}]}]},{weeks:[{week:5,theme:'AI & The Future Leader',days:[{day:31,topic:'ai',focus:'How AI is changing what leadership means'},{day:32,topic:'ai',focus:'Building an AI-ready team in banking'},{day:33,topic:'led',focus:'Leading organizational transformation'}]},{week:6,theme:'Influence & Communication',days:[{day:34,topic:'led',focus:'Executive presence — what it is and how to build it'},{day:35,topic:'sdf',focus:'The art of strategic communication'},{day:36,topic:'led',focus:'Running meetings that actually create decisions'}]},{week:7,theme:'Finance & Leadership',days:[{day:37,topic:'fin',focus:'What every leader must understand about banking P&L'},{day:38,topic:'eco',focus:'Reading macro signals to make better team decisions'},{day:39,topic:'led',focus:'Performance management systems that work'}]},{week:8,theme:'Mid-Point Review',days:[{day:40,topic:'sdf',focus:'Recalibrating your 90-day goals'},{milestone:true,day:60,text:'🏆 Day 60 Milestone: Depth Achieved.'}]}]},{weeks:[{week:9,theme:'Senior Leadership Mindset',days:[{day:61,topic:'led',focus:'How C-suite leaders think differently'},{day:62,topic:'geo',focus:'Using geopolitics as a competitive advantage'},{day:63,topic:'ai',focus:'AI strategy for senior banking leaders'}]},{week:10,theme:'Building Your Legacy',days:[{day:64,topic:'led',focus:'Mentoring and multiplying leadership'},{day:65,topic:'sdf',focus:'Designing your 3-year career trajectory'},{day:66,topic:'idn',focus:'Your role in Indonesia financial future'}]},{week:11,theme:'Final Integration',days:[{day:67,topic:'fin',focus:'The complete picture: finance, leadership, and strategy'},{day:68,topic:'led',focus:'Your personal leadership manifesto'},{day:69,topic:'sdf',focus:'Habits and systems for the next 5 years'}]},{week:12,theme:'Graduation',days:[{day:70,topic:'led',focus:'Sharing your leadership journey with your team'},{milestone:true,day:90,text:'🎓 Day 90 Complete! You have finished the Future Leader Track.'}]}]}]},
+  expert:{name:'Finance Expert',phases:[{weeks:[{week:1,theme:'Indonesian Banking System',days:[{day:1,topic:'fin',focus:'How the Indonesian banking system is structured'},{day:2,topic:'eco',focus:'Understanding Bank Indonesia and monetary policy'},{day:3,topic:'idn',focus:'OJK regulation — what every professional must know'}]},{week:2,theme:'Credit & Risk',days:[{day:4,topic:'fin',focus:'How banks make money — NIM, CASA, and efficiency ratio'},{day:5,topic:'fin',focus:'Credit risk fundamentals in Indonesian banking'},{day:6,topic:'eco',focus:'How inflation affects banking profitability'}]},{week:3,theme:'Digital Banking',days:[{day:7,topic:'fin',focus:'The rise of digital banks in Indonesia'},{day:8,topic:'ai',focus:'How AI is being deployed in Indonesian banks'},{day:9,topic:'fin',focus:'QRIS, GoPay, OVO — understanding the payment wars'}]},{week:4,theme:'Month 1 Milestone',days:[{day:10,topic:'eco',focus:'Reading BI rate decisions like a professional'},{milestone:true,day:30,text:'🏆 Day 30 Milestone: Solid foundation in Indonesian banking.'}]}]},{weeks:[{week:5,theme:'Macro & Markets',days:[{day:31,topic:'eco',focus:'Rupiah dynamics and what moves the currency'},{day:32,topic:'geo',focus:'How geopolitics affects Indonesian capital flows'},{day:33,topic:'eco',focus:'Government fiscal policy and banking liquidity'}]},{week:6,theme:'Fintech & Disruption',days:[{day:34,topic:'fin',focus:'P2P lending, BNPL and the credit disruption'},{day:35,topic:'ai',focus:'Generative AI in financial services'},{day:36,topic:'fin',focus:'Embedded finance and open banking in Indonesia'}]},{week:7,theme:'Global Finance',days:[{day:37,topic:'geo',focus:'Global banking trends that will hit Indonesia'},{day:38,topic:'fin',focus:'ESG in Indonesian banking'},{day:39,topic:'eco',focus:'Indonesia trade position and export dynamics'}]},{week:8,theme:'Mid Milestone',days:[{day:40,topic:'fin',focus:'Stress-testing your financial knowledge'},{milestone:true,day:60,text:'🏆 Day 60 Milestone: You think like a senior financial analyst.'}]}]},{weeks:[{week:9,theme:'Expert Analysis',days:[{day:61,topic:'fin',focus:'How to read a bank annual report like an expert'},{day:62,topic:'eco',focus:'Building your own Indonesia macro model'},{day:63,topic:'geo',focus:'ASEAN financial integration opportunities'}]},{week:10,theme:'Future of Finance',days:[{day:64,topic:'ai',focus:'AI and the future of banking jobs in Indonesia'},{day:65,topic:'fin',focus:'Central bank digital currency'},{day:66,topic:'idn',focus:'Indonesia 2030 — the financial sector outlook'}]},{week:11,theme:'Final Integration',days:[{day:67,topic:'fin',focus:'The complete Indonesian banking picture'},{day:68,topic:'eco',focus:'Your personal macro framework'},{day:69,topic:'sdf',focus:'Becoming the expert your organization relies on'}]},{week:12,theme:'Graduation',days:[{day:70,topic:'fin',focus:'Sharing your expertise with your team'},{milestone:true,day:90,text:'🎓 Day 90 Complete! Finance Expert Track finished.'}]}]}]},
+  thinker:{name:'Global Thinker',phases:[{weeks:[{week:1,theme:'AI & Technology Forces',days:[{day:1,topic:'ai',focus:'How AI is fundamentally changing work and organizations'},{day:2,topic:'ai',focus:'AI in banking — what is real vs. hype in 2026'},{day:3,topic:'ai',focus:'The jobs AI will create and destroy in finance'}]},{week:2,theme:'Geopolitical Forces',days:[{day:4,topic:'geo',focus:'US-China rivalry and what it means for Indonesia'},{day:5,topic:'geo',focus:'ASEAN geopolitics — Indonesia strategic position'},{day:6,topic:'geo',focus:'How sanctions and trade wars affect Indonesian banks'}]},{week:3,theme:'Macro Forces',days:[{day:7,topic:'eco',focus:'Global inflation and central bank responses'},{day:8,topic:'eco',focus:'Dollar dominance, de-dollarization, and the Rupiah'},{day:9,topic:'idn',focus:'Indonesia economic ambition — facts and fiction'}]},{week:4,theme:'Month 1 Milestone',days:[{day:10,topic:'geo',focus:'Connecting the dots — AI, geopolitics, and macro'},{milestone:true,day:30,text:'🏆 Day 30 Milestone: You now see the big picture.'}]}]},{weeks:[{week:5,theme:'Technology & Society',days:[{day:31,topic:'ai',focus:'AI governance — who controls the most powerful technology?'},{day:32,topic:'ai',focus:'Agentic AI — when machines start making decisions'},{day:33,topic:'geo',focus:'Technology wars — chips, data, and digital sovereignty'}]},{week:6,theme:'The New World Order',days:[{day:34,topic:'geo',focus:'BRICS expansion and the challenge to Western finance'},{day:35,topic:'eco',focus:'Global supply chain realignment and its banking impact'},{day:36,topic:'idn',focus:'Indonesia as a swing state in the new world order'}]},{week:7,theme:'Finance in a Fragmented World',days:[{day:37,topic:'fin',focus:'Banking in a deglobalized world'},{day:38,topic:'geo',focus:'Climate geopolitics and green finance in Indonesia'},{day:39,topic:'eco',focus:'The future of central banking globally'}]},{week:8,theme:'Mid Milestone',days:[{day:40,topic:'sdf',focus:'Building your personal geopolitical intelligence system'},{milestone:true,day:60,text:'🏆 Day 60 Milestone: You think in systems.'}]}]},{weeks:[{week:9,theme:'Scenario Thinking',days:[{day:61,topic:'geo',focus:'How to build geopolitical scenarios for business planning'},{day:62,topic:'ai',focus:'AI 2030 — building your view of the future'},{day:63,topic:'eco',focus:'Indonesia 2030 — your economic forecast'}]},{week:10,theme:'Communicating Insight',days:[{day:64,topic:'led',focus:'How to communicate complex global ideas simply'},{day:65,topic:'sdf',focus:'Building your reputation as a strategic thinker'},{day:66,topic:'fin',focus:'Using global intelligence for better financial decisions'}]},{week:11,theme:'Final Integration',days:[{day:67,topic:'geo',focus:'The complete global picture — your synthesis'},{day:68,topic:'ai',focus:'Leading in an AI-driven, geopolitically fragmented world'},{day:69,topic:'sdf',focus:'Your personal global intelligence system for life'}]},{week:12,theme:'Graduation',days:[{day:70,topic:'geo',focus:'Sharing your global perspective with your team'},{milestone:true,day:90,text:'🎓 Day 90 Complete! Global Thinker Track finished.'}]}]}]}
+};
+
+function showPath() {
+  document.getElementById('pgHome').style.display = 'none';
+  document.getElementById('pgTopic').style.display = 'none';
+  document.getElementById('pgPath').style.display = 'block';
+  currentTopic = null; window.scrollTo(0,0);
+  var saved = localStorage.getItem('fip_path');
+  if (saved) { try { pathData = JSON.parse(saved); } catch(e) {} }
+  if (pathData.track) {
+    document.getElementById('trackSelector').style.display = 'none';
+    document.getElementById('activeRoadmap').style.display = 'block';
+    document.getElementById('pathTrackName').textContent = TRACKS[pathData.track].name;
+    showPhase(currentPhase);
+  } else {
+    document.getElementById('trackSelector').style.display = 'block';
+    document.getElementById('activeRoadmap').style.display = 'none';
+    document.getElementById('pathTrackName').textContent = 'Learning';
+  }
+}
+function selectTrack(key) {
+  pathData = { track: key, completed: {}, streak: 0, startDate: new Date().toISOString().slice(0,10) };
+  savePathData();
+  document.getElementById('trackSelector').style.display = 'none';
+  document.getElementById('activeRoadmap').style.display = 'block';
+  document.getElementById('pathTrackName').textContent = TRACKS[key].name;
+  showPhase(0); toast('Track selected! Your 90-day journey begins today. 🚀');
+}
+function resetTrack() {
+  if (!confirm('Reset your learning track? Your progress will be lost.')) return;
+  pathData = { track: null, completed: {}, streak: 0, startDate: null };
+  savePathData();
+  document.getElementById('trackSelector').style.display = 'block';
+  document.getElementById('activeRoadmap').style.display = 'none';
+  document.getElementById('pathTrackName').textContent = 'Learning';
+}
+function savePathData() { localStorage.setItem('fip_path', JSON.stringify(pathData)); }
+function showPhase(idx) {
+  currentPhase = idx;
+  for (var i = 0; i < 3; i++) {
+    var tb = document.getElementById('ptab'+i);
+    if (tb) { tb.style.background = i===idx ? 'rgba(255,255,255,0.12)' : 'transparent'; tb.style.color = i===idx ? '#fff' : '#555'; }
+  }
+  renderRoadmap();
+}
+function renderRoadmap() {
+  var t = TRACKS[pathData.track]; if (!t) return;
+  var phase = t.phases[currentPhase];
+  var g = document.getElementById('weeklyCards'); g.innerHTML = '';
+  var total = 0, done = 0;
+  t.phases.forEach(function(ph) { ph.weeks.forEach(function(w) { w.days.forEach(function(d) { if (!d.milestone) { total++; if (pathData.completed[d.day]) done++; } }); }); });
+  var pct = total > 0 ? Math.round(done/total*100) : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('statLeft').textContent = Math.max(0, 90-done);
+  var score = Math.min(100, Math.round(pct*0.9 + (pathData.streak||0)*0.5));
+  document.getElementById('statScore').textContent = score;
+  document.getElementById('statStreak').textContent = pathData.streak || 0;
+  phase.weeks.forEach(function(week) {
+    var wDone = week.days.filter(function(d) { return !d.milestone && pathData.completed[d.day]; }).length;
+    var wTotal = week.days.filter(function(d) { return !d.milestone; }).length;
+    var wPct = wTotal > 0 ? Math.round(wDone/wTotal*100) : 0;
+    var wCard = document.createElement('div');
+    wCard.style.cssText = 'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:20px 22px;';
+    wCard.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">'
+      + '<div><div style="font-size:10px;font-family:JetBrains Mono,monospace;color:rgba(255,255,255,0.35);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;">Week '+week.week+'</div>'
+      + '<div style="font-size:15px;font-weight:600;color:#fff;">'+week.theme+'</div></div>'
+      + '<div style="text-align:right;"><div style="font-size:18px;font-weight:700;color:#fff;font-family:JetBrains Mono,monospace;">'+wPct+'%</div>'
+      + '<div style="font-size:10px;color:#444;">'+wDone+'/'+wTotal+'</div></div></div>'
+      + '<div style="height:2px;background:rgba(255,255,255,0.06);border-radius:2px;margin-bottom:16px;"><div style="height:100%;width:'+wPct+'%;background:#fff;border-radius:2px;"></div></div>'
+      + '<div class="day-list"></div>';
+    g.appendChild(wCard);
+    var dl = wCard.querySelector('.day-list');
+    week.days.forEach(function(d) {
+      if (d.milestone) {
+        var ms = document.createElement('div');
+        ms.style.cssText = 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:14px 18px;text-align:center;font-size:13px;color:#aaa;line-height:1.6;margin-top:8px;';
+        ms.textContent = d.text; dl.appendChild(ms); return;
+      }
+      var isDone = !!pathData.completed[d.day];
+      var topicObj = TOPICS[d.topic] || { name: d.topic };
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:opacity .2s;';
+      row.innerHTML = '<div style="width:28px;height:28px;border-radius:50%;border:2px solid '+(isDone?'#fff':'rgba(255,255,255,0.2)')+';background:'+(isDone?'#fff':'transparent')+';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:'+(isDone?'#000':'rgba(255,255,255,0.25)')+';transition:all .2s;">'+(isDone?'✓':d.day)+'</div>'
+        + '<div style="flex:1;"><div style="font-size:10px;font-family:JetBrains Mono,monospace;color:rgba(255,255,255,0.3);letter-spacing:.1em;margin-bottom:3px;">DAY '+d.day+' &middot; '+(topicObj.name||d.topic).toUpperCase()+'</div>'
+        + '<div style="font-size:13px;color:'+(isDone?'rgba(255,255,255,0.4)':'#ddd')+';line-height:1.5;'+(isDone?'text-decoration:line-through;':'')+'">' + d.focus + '</div></div>'
+        + '<button onclick="event.stopPropagation();openTopic(&quot;'+d.topic+'&quot;)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:6px 12px;font-size:11px;color:#888;cursor:pointer;white-space:nowrap;font-family:Plus Jakarta Sans,sans-serif;flex-shrink:0;" onmouseover="this.style.color=\'#fff\'" onmouseout="this.style.color=\'#888\'">Read &rarr;</button>';
+      row.onclick = (function(dayNum) { return function() {
+        if (pathData.completed[dayNum]) { delete pathData.completed[dayNum]; }
+        else { pathData.completed[dayNum] = new Date().toISOString().slice(0,10); toast('Day '+dayNum+' completed! ✓'); }
+        savePathData(); renderRoadmap();
+      }; })(d.day);
+      dl.appendChild(row);
+    });
+  });
+}
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Finance Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,300;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#000000;--s1:#0a0a0a;--s2:#111111;--s3:#181818;--s4:#202020;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.16);--border3:rgba(255,255,255,0.28);
+  --gold:#d4a843;--gold-l:#f0c96a;--gold-dim:rgba(212,168,67,0.1);--gold-glow:rgba(212,168,67,0.2);
+  --teal:#ffffff;--teal-dim:rgba(255,255,255,0.06);
+  --txt:#ffffff;--txt2:#c8c8c8;--muted:#666666;--dim:#333333;
+  --blue:#ffffff;--violet:#e0e0e0;--green:#ffffff;--red:#ff6b8a;--amber:#d4a843;
+  --warm1:#111111;--warm2:#181818;
+}
+body{background:var(--bg);color:var(--txt);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.6;}
+
+/* AMBIENT */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.amb-orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:0.15;}
+.amb-orb.o1{width:700px;height:700px;background:radial-gradient(circle,rgba(255,255,255,0.07),transparent);top:-200px;left:-150px;animation:orbFloat 20s ease-in-out infinite;}
+.amb-orb.o2{width:600px;height:600px;background:radial-gradient(circle,rgba(212,168,67,0.06),transparent);top:25%;right:-150px;animation:orbFloat 25s ease-in-out infinite reverse;}
+.amb-orb.o3{width:500px;height:500px;background:radial-gradient(circle,rgba(255,255,255,0.05),transparent);bottom:-150px;left:25%;animation:orbFloat 18s ease-in-out infinite;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0);}33%{transform:translate(30px,-20px);}66%{transform:translate(-20px,30px);}}
+.gridlines{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:60px 60px;}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+.glass-card{background:rgba(8,8,8,0.97);border:1px solid var(--border2);border-radius:20px;padding:44px;max-width:560px;width:100%;backdrop-filter:blur(20px);box-shadow:0 40px 100px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.12),0 0 0 1px rgba(255,255,255,0.04);animation:cardIn .5s cubic-bezier(.16,1,.3,1) both;}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
+.eyebrow::before{content:'';width:24px;height:1px;background:linear-gradient(90deg,#ffffff,transparent);}
+.eyebrow::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0.15),transparent);}
+.sc-title{font-family:'Fraunces',serif;font-size:32px;font-weight:900;line-height:1.15;margin-bottom:10px;letter-spacing:-.02em;}
+.sc-title em{font-style:italic;color:var(--gold);}
+.sc-sub{font-size:14px;color:var(--txt2);margin-bottom:28px;line-height:1.7;}
+.field{margin-bottom:18px;}
+.flabel{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;display:block;}
+input.inp{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:10px;padding:13px 16px;color:var(--txt);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;transition:all .2s;}
+input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-shadow:0 0 0 3px var(--gold-dim);}
+
+.interest-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;}
+@media(max-width:500px){.interest-grid{grid-template-columns:1fr 1fr;}}
+.int-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px 14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;text-align:center;}
+.int-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .25s;border-radius:14px;}
+.int-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.int-card.sel{border-color:rgba(255,255,255,0.6);box-shadow:0 0 0 1px rgba(255,255,255,0.2),0 0 30px rgba(255,255,255,0.06);}
+.int-card.sel::before{opacity:0.07;background:var(--gold);}
+.int-card .ci{font-size:26px;margin-bottom:8px;display:block;}
+.int-card .cn{font-size:12px;font-weight:600;color:var(--txt);margin-bottom:3px;line-height:1.3;}
+.int-card .cd{font-size:10px;color:var(--muted);line-height:1.4;}
+.int-card.sel .cn{color:#ffffff;}
+.main-btn{width:100%;background:#ffffff;color:#000000;border:none;border-radius:12px;padding:15px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;cursor:pointer;margin-top:14px;transition:all .25s;}
+.main-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 40px rgba(255,255,255,0.2);}
+.hint-txt{font-size:11px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5;}
+
+/* NAV */
+.nav{background:rgba(0,0,0,0.96);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:50;backdrop-filter:blur(20px);}
+.nav-brand{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:#ffffff;display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity .2s;text-decoration:none;}
+.nav-brand:hover{opacity:.8;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:#ffffff;box-shadow:0 0 8px rgba(255,255,255,0.4);animation:pulse 2.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 8px rgba(255,255,255,0.3);}50%{box-shadow:0 0 20px rgba(255,255,255,0.5);}}
+.nav-r{display:flex;align-items:center;gap:8px;}
+.nav-name{font-size:12px;color:var(--muted);}
+.nav-name b{color:var(--txt2);}
+.nibtn{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:var(--txt2);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;padding:6px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;text-decoration:none;white-space:nowrap;}
+.nibtn:hover{border-color:var(--border2);color:var(--txt);background:rgba(255,255,255,0.07);}
+.nibtn.gold{border-color:rgba(255,255,255,0.3);color:#ffffff;}
+.nibtn.gold:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.5);}
+.nibtn.home{border-color:rgba(255,255,255,0.2);color:#cccccc;}
+.nibtn.home:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.4);}
+
+/* CACHE INDICATOR */
+.cache-badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;text-transform:uppercase;}
+.cache-badge.live{color:rgba(0,212,170,0.7);border-color:rgba(0,212,170,0.15);}
+.cache-badge.cached{color:rgba(212,168,67,0.7);border-color:rgba(212,168,67,0.15);}
+.cache-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+
+/* HOME DASHBOARD */
+#pgHome{position:relative;z-index:1;}
+.home-hero{max-width:1120px;margin:0 auto;padding:48px 24px 32px;}
+.home-hero-inner{text-align:center;margin-bottom:48px;}
+.home-greeting{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.home-greeting::before,.home-greeting::after{content:'';flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3));}
+.home-greeting::after{background:linear-gradient(90deg,var(--gold),transparent);}
+.home-title{font-family:'Fraunces',serif;font-size:clamp(34px,5vw,58px);font-weight:900;line-height:1.1;letter-spacing:-.03em;margin-bottom:14px;text-shadow:0 2px 40px rgba(255,255,255,0.08);}
+.home-title em{font-style:italic;color:var(--gold);}
+.home-sub{font-size:15px;color:var(--txt2);max-width:500px;margin:0 auto 32px;line-height:1.8;letter-spacing:0.01em;}
+.home-meta{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;}
+.home-meta-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt2);font-family:'JetBrains Mono',monospace;letter-spacing:.06em;}
+.home-meta-dot{width:5px;height:5px;border-radius:50%;}
+
+/* TOPIC GRID */
+.topic-grid{max-width:1120px;margin:0 auto;padding:0 24px 80px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media(max-width:900px){.topic-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.topic-grid{grid-template-columns:1fr;}}
+.topic-card{border-radius:20px;overflow:hidden;cursor:pointer;transition:all .35s cubic-bezier(.16,1,.3,1);position:relative;min-height:220px;display:flex;flex-direction:column;}
+.topic-card:hover{transform:translateY(-6px);}
+.topic-card-bg{position:absolute;inset:0;opacity:0.18;transition:opacity .35s;}
+.topic-card:hover .topic-card-bg{opacity:0.28;}
+.topic-card-border{position:absolute;inset:0;border-radius:20px;border:1px solid rgba(255,255,255,0.1);transition:border-color .35s;}
+.topic-card:hover .topic-card-border{border-color:rgba(255,255,255,0.35);}
+.topic-card-inner{position:relative;z-index:1;padding:28px 26px;flex:1;display:flex;flex-direction:column;background:rgba(0,0,0,0.75);}
+.topic-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+.topic-icon-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:1px solid rgba(255,255,255,0.1);}
+.topic-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);color:var(--muted);}
+.topic-name{font-family:'Fraunces',serif;font-size:22px;font-weight:700;line-height:1.2;letter-spacing:-.01em;margin-bottom:8px;}
+.topic-desc{font-size:13px;color:var(--txt2);line-height:1.65;flex:1;}
+.topic-cta{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);}
+.topic-cta-txt{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;}
+.topic-arrow{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:16px;}
+.topic-card:hover .topic-arrow{transform:translateX(3px);}
+
+/* Per-topic colors */
+.t-ai .topic-card-bg{background:linear-gradient(135deg,rgba(255,255,255,0.14),rgba(255,255,255,0.06));}.t-ai .topic-icon-wrap{background:rgba(255,255,255,0.08);}.t-ai .topic-arrow{background:rgba(255,255,255,0.1);color:#ffffff;}.t-ai .topic-name{color:#ffffff;}
+.t-fin .topic-card-bg{background:linear-gradient(135deg,#d4a843,#ff8c42);}.t-fin .topic-icon-wrap{background:rgba(212,168,67,0.15);}.t-fin .topic-arrow{background:rgba(212,168,67,0.15);color:var(--gold);}.t-fin .topic-name{color:#ffffff;}
+.t-eco .topic-card-bg{background:linear-gradient(135deg,#00d4aa,#00e5a0);}.t-eco .topic-icon-wrap{background:rgba(0,212,170,0.15);}.t-eco .topic-arrow{background:rgba(0,212,170,0.15);color:var(--teal);}.t-eco .topic-name{color:#ffffff;}
+.t-led .topic-card-bg{background:linear-gradient(135deg,#00e5a0,#4f9eff);}.t-led .topic-icon-wrap{background:rgba(0,229,160,0.15);}.t-led .topic-arrow{background:rgba(0,229,160,0.15);color:var(--green);}.t-led .topic-name{color:#ffffff;}
+.t-sdf .topic-card-bg{background:linear-gradient(135deg,rgba(255,255,255,0.1),rgba(212,168,67,0.1));}.t-sdf .topic-icon-wrap{background:rgba(255,255,255,0.08);}.t-sdf .topic-arrow{background:rgba(255,255,255,0.1);color:#ffffff;}.t-sdf .topic-name{color:#ffffff;}
+.t-geo .topic-card-bg{background:linear-gradient(135deg,#ff6b6b,#ff8c42);}.t-geo .topic-icon-wrap{background:rgba(255,107,107,0.15);}.t-geo .topic-arrow{background:rgba(255,107,107,0.15);color:#ff6b6b;}.t-geo .topic-name{color:#ffffff;}
+.t-idn .topic-card-bg{background:linear-gradient(135deg,#e63946,#c1121f);}.t-idn .topic-icon-wrap{background:rgba(230,57,70,0.15);}.t-idn .topic-arrow{background:rgba(230,57,70,0.15);color:#ff7b85;}.t-idn .topic-name{color:#ffffff;}
+
+/* TOPIC PAGE */
+#pgTopic{display:none;position:relative;z-index:1;}
+.topic-page-wrap{max-width:860px;margin:0 auto;padding:36px 24px 100px;position:relative;}
+.topic-page-hero{margin-bottom:32px;}
+.back-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 14px;font-size:12px;color:#aaaaaa;cursor:pointer;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:24px;}
+.back-btn:hover{border-color:rgba(255,255,255,0.4);color:#ffffff;}
+.tph-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.25em;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.tph-eyebrow::before{content:'';width:16px;height:1px;background:var(--gold);}
+.tph-title{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:900;line-height:1.1;letter-spacing:-.02em;margin-bottom:10px;}
+.tph-title em{font-style:italic;}
+.tph-sub{font-size:15px;color:var(--txt2);line-height:1.8;max-width:600px;margin-bottom:16px;letter-spacing:0.01em;}
+.tph-rule{height:2px;margin-bottom:8px;}
+
+/* CACHE STATUS BAR */
+.cache-status-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:20px;flex-wrap:wrap;gap:8px;}
+.cache-status-left{display:flex;align-items:center;gap:10px;}
+.cache-expires{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;}
+.cache-clear-btn{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,0.25);background:none;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:3px 9px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.cache-clear-btn:hover{color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.2);}
+
+/* OTHER TOPICS BAR */
+.other-topics{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;padding:18px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:14px;}
+.ot-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;color:rgba(255,255,255,0.4);text-transform:uppercase;width:100%;margin-bottom:4px;}
+.ot-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:11px;font-weight:500;color:var(--txt2);cursor:pointer;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;}
+.ot-btn:hover{border-color:var(--border2);color:var(--txt);background:rgba(255,255,255,0.07);}
+.ot-btn .ot-dot{width:6px;height:6px;border-radius:50%;}
+
+/* CTRL ROW */
+.ctrl{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:12px;flex-wrap:wrap;}
+.ctrl-greet{font-size:14px;color:var(--txt2);}
+.ctrl-greet b{color:#ffffff;}
+.rbtn{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.2);color:#ffffff;padding:9px 18px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:all .2s;}
+.rbtn:hover:not(:disabled){background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.4);box-shadow:0 4px 20px rgba(255,255,255,0.08);}
+.rbtn:disabled{opacity:.4;cursor:not-allowed;}
+.rbtn.spin svg{animation:rot 1s linear infinite;}
+
+/* LOADER */
+.ldr{display:none;margin-bottom:24px;}
+.ldr.on{display:block;}
+.lbar{height:2px;background:var(--s3);border-radius:2px;overflow:hidden;margin-bottom:10px;position:relative;}
+.lbar::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:100%;background:linear-gradient(90deg,transparent,var(--gold),var(--gold-l),transparent);animation:lslide 1.6s ease-in-out infinite;}
+@keyframes lslide{0%{left:-40%;}100%{left:140%;}}
+.ltxt{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.12em;}
+.ebx{display:none;background:rgba(255,95,126,0.06);border:1px solid rgba(255,95,126,.2);border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:13px;color:#ff8fa8;line-height:1.6;}
+.ebx.on{display:block;}
+
+/* ─── NEW: BRIEFING CARD STRUCTURE ─────────────────────────── */
+.content-stack{display:flex;flex-direction:column;gap:24px;}
+.bcard{background:rgba(10,10,10,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:20px;overflow:hidden;transition:border-color .3s,transform .3s;backdrop-filter:blur(12px);}
+.bcard:hover{border-color:rgba(255,255,255,0.22);transform:translateY(-2px);}
+.bcard-accent{height:2px;}
+
+/* HEADLINE ZONE */
+.bcard-headline-zone{padding:24px 28px 20px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.bcard-section-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;opacity:.75;}
+.bcard-headline{font-family:'Fraunces',serif;font-size:clamp(17px,2.5vw,22px);font-weight:700;line-height:1.35;letter-spacing:-.02em;color:#ffffff;margin-bottom:0;}
+
+/* KEY INSIGHTS ZONE */
+.bcard-insights-zone{padding:20px 28px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.bcard-insights-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:14px;}
+.bcard-insights-list{list-style:none;display:flex;flex-direction:column;gap:0;}
+.bcard-insights-list li{font-size:14px;line-height:1.85;color:var(--txt2);padding:10px 0 10px 22px;border-bottom:1px solid rgba(255,255,255,0.05);position:relative;letter-spacing:0.01em;}
+.bcard-insights-list li:last-child{border-bottom:none;padding-bottom:0;}
+.bcard-insights-list li::before{content:'';position:absolute;left:0;top:17px;width:7px;height:7px;border-radius:50%;background:var(--bcolor,#fff);opacity:.7;}
+@media(max-width:600px){
+  .bcard-insights-list li{font-size:13.5px;line-height:1.8;}
+}
+
+/* LEADERSHIP INSIGHT ZONE */
+.bcard-leadership-zone{padding:18px 28px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);}
+.bcard-leadership-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px;opacity:.7;}
+.bcard-leadership-tag::before{content:'';width:16px;height:1px;}
+.bcard-leadership-txt{font-size:14px;line-height:1.8;color:#e0e0e0;font-style:italic;letter-spacing:0.005em;}
+
+/* REFLECTION QUESTION ZONE */
+.bcard-reflect-zone{padding:16px 28px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.01);}
+.bcard-reflect-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;}
+.bcard-reflect-q{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;font-style:italic;}
+
+/* DEEP DIVE ZONE */
+.bcard-actions-zone{padding:14px 28px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.ddtog{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:500;color:#888888;cursor:pointer;transition:all .2s;}
+.ddtog:hover{border-color:rgba(255,255,255,0.3);color:#ffffff;background:rgba(255,255,255,0.05);}
+.ddtog.open{border-color:rgba(255,255,255,0.35);color:#ffffff;background:rgba(255,255,255,0.06);}
+.ddtog svg{transition:transform .3s;flex-shrink:0;}
+.ddtog.open svg{transform:rotate(180deg);}
+.ddc{display:none;padding:0 28px 24px;}
+.ddc.on{display:block;animation:fadeSlide .3s ease both;}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.ddt{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px 20px;}
+.ddt p{font-size:14px;color:var(--txt2);line-height:1.95;margin-bottom:12px;letter-spacing:0.01em;}
+.ddt p:last-child{margin-bottom:0;}
+
+/* ACTIONS */
+.act-save{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:14px;flex-shrink:0;}
+.act-save:hover{background:rgba(255,255,255,0.08);}
+.act-save.sv{background:var(--gold-dim);border-color:rgba(212,168,67,.4);}
+.shbtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;}
+.shbtn:hover{border-color:var(--border2);color:var(--txt);}
+.shbtn.wa:hover{border-color:#25D366;color:#25D366;background:rgba(37,211,102,0.05);}
+
+/* SKELETON */
+.sk{background:linear-gradient(90deg,var(--s3) 25%,var(--s4) 50%,var(--s3) 75%);background-size:200% 100%;animation:shimmer 1.8s infinite;border-radius:6px;height:12px;margin:8px 0;}
+.sk.w80{width:80%;}.sk.w60{width:60%;}.sk.w70{width:70%;}.sk.w45{width:45%;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* REFLECT PANEL */
+.reflect-panel{background:rgba(8,8,8,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:22px;margin-top:24px;backdrop-filter:blur(12px);}
+.reflect-panel .stit{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.reflect-panel .stit::before{content:'';width:12px;height:1px;background:var(--gold);}
+.rfq{font-size:13px;color:#e0e0e0;line-height:1.7;margin-bottom:14px;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;}
+.rfta{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--txt);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;resize:none;outline:none;transition:all .2s;min-height:90px;line-height:1.6;}
+.rfta:focus{border-color:var(--gold);background:var(--gold-dim);}
+.rfsv{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.2);color:#ffffff;border-radius:10px;padding:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-top:10px;transition:all .2s;}
+.rfsv:hover{background:linear-gradient(135deg,rgba(212,168,67,.3),rgba(212,168,67,.15));}
+
+/* BOTTOM CTA */
+.bottom-cta{display:flex;align-items:center;justify-content:space-between;margin-top:28px;padding-top:24px;border-top:1px solid var(--border);gap:16px;flex-wrap:wrap;}
+.hint{font-size:12px;color:var(--muted);line-height:1.7;}
+.hint b{color:#ffffff;}
+.clnk{display:inline-flex;align-items:center;gap:7px;background:#ffffff;color:#000000;padding:11px 20px;border-radius:10px;font-size:12px;font-weight:700;text-decoration:none;letter-spacing:.04em;transition:all .25px;}
+.clnk:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,255,255,0.2);}
+.page-foot{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.15em;margin-top:40px;}
+
+/* MODALS */
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);}
+.moverlay.open{display:flex;}
+.mbox{background:rgba(6,6,6,0.99);border:1px solid rgba(255,255,255,0.15);border-radius:20px;max-width:660px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,0.9),inset 0 1px 0 rgba(255,255,255,0.08);animation:cardIn .35s cubic-bezier(.16,1,.3,1) both;}
+.mhdr{padding:32px 36px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.mhdr-t{font-family:'Fraunces',serif;font-size:26px;font-weight:900;line-height:1.2;letter-spacing:-.02em;}
+.mhdr-t em{color:var(--gold);font-style:italic;}
+.mclose{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:20px;flex-shrink:0;transition:all .2s;}
+.mclose:hover{color:var(--txt);border-color:var(--border2);}
+.mbody{padding:24px 36px 36px;}
+.msec{margin-bottom:24px;}
+.msec:last-child{margin-bottom:0;}
+.msec-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.msec-lbl::before{content:'';width:14px;height:1px;background:var(--gold);}
+.msec-txt{font-size:13px;color:var(--txt2);line-height:1.8;}
+.msec-txt b{color:var(--txt);}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+@media(max-width:480px){.mgrid{grid-template-columns:1fr;}}
+.mfeat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
+.mf-i{font-size:20px;margin-bottom:8px;}
+.mf-t{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:4px;}
+.mf-d{font-size:12px;color:var(--muted);line-height:1.6;}
+.msteps{list-style:none;counter-reset:st;margin-top:10px;}
+.msteps li{counter-increment:st;display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--txt2);line-height:1.6;}
+.msteps li:last-child{border-bottom:none;}
+.msteps li::before{content:counter(st);width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#ffffff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-family:'JetBrains Mono',monospace;}
+.mdivider{height:1px;background:var(--border);margin:20px 0;}
+/* FEEDBACK */
+.fb-field{margin-bottom:15px;}
+.fb-lbl{font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;display:block;}
+.fb-inp{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:10px;padding:12px 15px;color:var(--txt);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;transition:all .2s;}
+.fb-inp:focus{border-color:var(--gold);background:var(--gold-dim);}
+.fb-ta{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:10px;padding:12px 15px;color:var(--txt);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;resize:none;min-height:110px;transition:all .2s;line-height:1.65;}
+.fb-ta:focus{border-color:var(--gold);background:var(--gold-dim);}
+.fb-stars{display:flex;gap:6px;margin-top:8px;}
+.fb-star{font-size:24px;cursor:pointer;opacity:.25;transition:all .2s;background:none;border:none;padding:0;line-height:1;}
+.fb-star:hover,.fb-star.on{opacity:1;transform:scale(1.2);}
+.fb-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.fb-chip{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;}
+.fb-chip:hover{border-color:var(--border2);color:var(--txt);}
+.fb-chip.on{background:var(--gold-dim);border-color:rgba(212,168,67,.4);color:#ffffff;}
+.fb-submit{width:100%;background:#ffffff;color:#000000;border:none;border-radius:12px;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;transition:all .25s;}
+.fb-submit:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,255,255,0.15);}
+.fb-submit:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.fb-ok{display:none;text-align:center;padding:28px 0;}
+.fb-ok.show{display:block;}
+.fb-ok-icon{font-size:48px;margin-bottom:14px;}
+.fb-ok-txt{font-size:14px;color:var(--txt2);line-height:1.8;}
+.fb-ok-txt span{color:#ffffff;font-weight:600;}
+.track-card:hover{border-color:rgba(255,255,255,0.4)!important;transform:translateY(-3px);box-shadow:0 12px 40px rgba(255,255,255,0.05);}
+.track-card.sel{border-color:rgba(255,255,255,0.7)!important;background:rgba(255,255,255,0.08)!important;}
+.toast{position:fixed;bottom:28px;right:28px;background:rgba(20,20,20,0.98);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:13px 20px;font-size:13px;color:#ffffff;z-index:999;opacity:0;transform:translateY(10px);transition:all .35s cubic-bezier(.16,1,.3,1);pointer-events:none;backdrop-filter:blur(10px);box-shadow:0 8px 32px rgba(0,0,0,0.6);}
+.toast.show{opacity:1;transform:translateY(0);}
+@keyframes rot{to{transform:rotate(360deg);}}
+@media(max-width:580px){
+  .nav{padding:0 14px;}
+  .bottom-cta{flex-direction:column;}
+  .nav-name{display:none;}
+  .bcard-headline-zone,.bcard-insights-zone,.bcard-leadership-zone,.bcard-reflect-zone,.bcard-actions-zone,.ddc{padding-left:18px;padding-right:18px;}
+}
+</style>
+</head>
+<body>
+
+<div class="ambient"><div class="amb-orb o1"></div><div class="amb-orb o2"></div><div class="amb-orb o3"></div></div>
+<div class="gridlines"></div>
+
+<!-- PROFILE SCREEN -->
+<div id="sProfile" class="screen">
+  <div class="glass-card">
+    <div class="eyebrow">Finance Intelligence Platform</div>
+    <div class="sc-title">Welcome to Your<br><em>Morning Edge</em></div>
+    <div class="sc-sub">Your personalized daily intelligence platform for finance and banking professionals in Indonesia. Powered by Claude AI.</div>
+    <div class="field">
+      <label class="flabel">Your Name</label>
+      <input class="inp" id="pName" type="text" placeholder="e.g. Jufri" maxlength="40" autocomplete="off"/>
+    </div>
+    <button id="pBtn" onclick="doStart()" style="width:100%;background:#ffffff;color:#000000;border:none;border-radius:12px;padding:15px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;cursor:pointer;margin-bottom:12px;transition:opacity .15s;opacity:0.35;">Enter the Platform &rarr;</button>
+    <div class="hint-txt">Free &middot; No login required &middot; AI-powered daily briefing</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none;">
+  <nav class="nav">
+    <div class="nav-brand" onclick="showHome()">
+      <div class="nav-dot"></div>Finance Intelligence
+    </div>
+    <div class="nav-r">
+      <div class="nav-name">Hi, <b id="navN">—</b></div>
+      <button class="nibtn home" onclick="showHome()">&#8962; Home</button>
+      <button class="nibtn" onclick="showPath()" style="border-color:rgba(255,255,255,0.2);color:#cccccc;">&#128218; My Roadmap</button>
+      <button class="nibtn" onclick="openMdl('readme')">&#9432; About</button>
+      <button class="nibtn gold" onclick="openMdl('feedback')">&#9998; Feedback</button>
+    </div>
+  </nav>
+
+  <!-- HOME PAGE -->
+  <div id="pgHome">
+    <div class="home-hero">
+      <div class="home-hero-inner">
+        <div class="home-greeting">Daily Intelligence Platform</div>
+        <div class="home-title"><span id="homeGreetWord">Good morning,</span><br><em id="homeN">—</em></div>
+        <div class="home-sub">Choose a topic below to load your personalized intelligence briefing. Each section is focused, deep, and tailored for Indonesian finance professionals.</div>
+        <div class="home-meta">
+          <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--green)"></div>7 Topics Available</div>
+          <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--gold)"></div>Claude AI Powered</div>
+          <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--blue)"></div><span id="homeClock">--:--</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="topic-grid">
+      <div class="t-ai"><div class="topic-card" onclick="openTopic('ai')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🤖</div><div class="topic-tag">TECHNOLOGY</div></div><div class="topic-name">AI for Leaders</div><div class="topic-desc">How artificial intelligence is reshaping banking, fintech, workforce, and leadership strategy — with Indonesia-specific context and actionable insights.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
+      <div class="t-fin"><div class="topic-card" onclick="openTopic('fin')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🏦</div><div class="topic-tag">INDUSTRY</div></div><div class="topic-name">Banking &amp; Finance</div><div class="topic-desc">Key developments in global and Indonesian banking, OJK regulations, digital banking trends, credit markets, and financial product innovation.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
+      <div class="t-eco"><div class="topic-card" onclick="openTopic('eco')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">📈</div><div class="topic-tag">MACRO</div></div><div class="topic-name">Indonesia Economy</div><div class="topic-desc">Bank Indonesia monetary policy, Rupiah movements, inflation signals, GDP growth, trade balance, and macro trends affecting the financial sector.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
+      <div class="t-led"><div class="topic-card" onclick="openTopic('led')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🎯</div><div class="topic-tag">GROWTH</div></div><div class="topic-name">Strategy &amp; Leadership</div><div class="topic-desc">Modern leadership frameworks, team management, organizational design, career positioning, and strategic thinking for finance professionals in 2026.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
+      <div class="t-geo"><div class="topic-card" onclick="openTopic('geo')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🌐</div><div class="topic-tag">GLOBAL</div></div><div class="topic-name">Geopolitics</div><div class="topic-desc">Global power shifts, US-China tensions, ASEAN developments, trade wars, sanctions, and geopolitical risks that directly impact Indonesian banking and investment.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
+      <div class="t-idn"><div class="topic-card" onclick="openTopic('idn')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🇮🇩</div><div class="topic-tag">INDONESIA</div></div><div class="topic-name">Indonesia Updates</div><div class="topic-desc">Latest Indonesian government policy, cabinet decisions, OJK regulatory changes, major business developments, and domestic opportunities for finance professionals.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
+      <div class="t-sdf"><div class="topic-card" onclick="openTopic('sdf')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🚀</div><div class="topic-tag">PERSONAL</div></div><div class="topic-name">Self-Development</div><div class="topic-desc">Habits, mindset, productivity systems, learning strategies, and career growth tactics specifically for ambitious finance and banking professionals.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
+    </div>
+  </div>
+
+  <!-- TOPIC PAGE -->
+  <div id="pgTopic">
+    <div class="topic-page-wrap">
+      <button class="back-btn" onclick="showHome()">&#8592; Back to All Topics</button>
+      <div class="topic-page-hero">
+        <div class="tph-eyebrow" id="tphEyebrow">Intelligence Briefing</div>
+        <div class="tph-title" id="tphTitle">—</div>
+        <div class="tph-sub" id="tphSub">—</div>
+        <div class="tph-rule" id="tphRule"></div>
+      </div>
+
+      <!-- CACHE STATUS -->
+      <div class="cache-status-bar" id="cacheStatusBar" style="display:none;">
+        <div class="cache-status-left">
+          <span class="cache-badge" id="cacheBadge"><span class="cache-dot"></span><span id="cacheBadgeText">Live</span></span>
+          <span class="cache-expires" id="cacheExpiresText"></span>
+        </div>
+        <button class="cache-clear-btn" id="cacheClearBtn" onclick="clearCacheAndReload()">↺ Fetch Fresh</button>
+      </div>
+
+      <!-- OTHER TOPICS -->
+      <div class="other-topics">
+        <div class="ot-label">Jump to another topic</div>
+        <div id="otherTopicBtns"></div>
+      </div>
+
+      <!-- CONTROLS -->
+      <div class="ctrl">
+        <div class="ctrl-greet"><span id="greetingText">Good morning,</span> <b id="tpName">—</b></div>
+        <button class="rbtn" id="rBtn" onclick="forceReload()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh
+        </button>
+      </div>
+      <div class="ldr" id="ldr"><div class="lbar"></div><div class="ltxt" id="lTxt">Loading intelligence...</div></div>
+      <div class="ebx" id="ebx"></div>
+      <div class="content-stack" id="contentStack"></div>
+
+      <!-- REFLECT -->
+      <div class="reflect-panel">
+        <div class="stit">Daily Reflection</div>
+        <div class="rfq" id="rfQ">Loading your reflection prompt...</div>
+        <textarea class="rfta" id="rfTa" placeholder="Write your thoughts here..."></textarea>
+        <button class="rfsv" onclick="saveRef()">Save Reflection</button>
+      </div>
+      <div class="bottom-cta">
+        <div class="hint">Want to go deeper on this topic?<br><b>Open Claude</b> and say: "Deep dive into [topic] from my morning brief."</div>
+        <a href="https://claude.ai" target="_blank" class="clnk">Open Claude &rarr;</a>
+      </div>
+      <div class="page-foot" id="pgFoot">FINANCE INTELLIGENCE PLATFORM</div>
+    </div>
+  </div>
+
+  <!-- LEARNING PATH PAGE -->
+  <div id="pgPath" style="display:none;">
+    <div style="max-width:900px;margin:0 auto;padding:36px 24px 100px;position:relative;z-index:1;">
+      <button class="back-btn" onclick="showHome()">&#8592; Back to Home</button>
+      <div style="margin-bottom:36px;">
+        <div class="tph-eyebrow" style="margin-bottom:10px;">Your Career Development System</div>
+        <div class="home-title" style="font-size:clamp(26px,3.5vw,40px);margin-bottom:12px;">Your <em id="pathTrackName">Learning</em> Roadmap</div>
+        <div style="font-size:15px;color:var(--txt2);line-height:1.8;max-width:560px;margin-bottom:24px;">A personalized 90-day intelligence journey built around your goals. Read, complete, and grow — your progress is tracked every step of the way.</div>
+      </div>
+      <div id="trackSelector">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;color:rgba(255,255,255,0.45);text-transform:uppercase;margin-bottom:16px;">Choose Your Learning Track</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;">
+          <div class="track-card" onclick="selectTrack('leader')" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:24px 20px;cursor:pointer;transition:all .25s;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">🎯</div><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;">Future Leader</div><div style="font-size:12px;color:#777;line-height:1.6;">Master leadership, strategy, and team management. Built for those aiming for senior roles.</div><div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;"><span style="font-size:10px;background:rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;color:#aaa;">Leadership</span><span style="font-size:10px;background:rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;color:#aaa;">Strategy</span><span style="font-size:10px;background:rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;color:#aaa;">Self-Dev</span></div></div>
+          <div class="track-card" onclick="selectTrack('expert')" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:24px 20px;cursor:pointer;transition:all .25s;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">🏦</div><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;">Finance Expert</div><div style="font-size:12px;color:#777;line-height:1.6;">Deep expertise in banking, economy, and Indonesian financial markets. For specialists.</div><div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;"><span style="font-size:10px;background:rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;color:#aaa;">Banking</span><span style="font-size:10px;background:rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;color:#aaa;">Economy</span><span style="font-size:10px;background:rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;color:#aaa;">Indonesia</span></div></div>
+          <div class="track-card" onclick="selectTrack('thinker')" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:24px 20px;cursor:pointer;transition:all .25s;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">🌐</div><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;">Global Thinker</div><div style="font-size:12px;color:#777;line-height:1.6;">Understand AI, geopolitics, and macro forces shaping the future of Indonesian finance.</div><div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;"><span style="font-size:10px;background:rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;color:#aaa;">AI</span><span style="font-size:10px;background:rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;color:#aaa;">Geopolitics</span><span style="font-size:10px;background:rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;color:#aaa;">Economy</span></div></div>
+        </div>
+      </div>
+      <div id="activeRoadmap" style="display:none;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px;">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px;text-align:center;"><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:#fff;" id="statScore">0</div><div style="font-size:11px;color:#555;margin-top:4px;">Intelligence Score</div></div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px;text-align:center;"><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:#fff;" id="statDone">0</div><div style="font-size:11px;color:#555;margin-top:4px;">Days Completed</div></div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px;text-align:center;"><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:#fff;" id="statStreak">0</div><div style="font-size:11px;color:#555;margin-top:4px;">Day Streak</div></div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px;text-align:center;"><div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:#fff;" id="statLeft">90</div><div style="font-size:11px;color:#555;margin-top:4px;">Days Remaining</div></div>
+        </div>
+        <div style="margin-bottom:32px;"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div style="font-size:12px;color:#666;">Overall Progress</div><div style="font-size:12px;color:#fff;font-weight:600;" id="progressPct">0%</div></div><div style="height:6px;background:rgba(255,255,255,0.08);border-radius:6px;overflow:hidden;"><div id="progressBar" style="height:100%;width:0%;background:linear-gradient(90deg,#ffffff,rgba(255,255,255,0.5));border-radius:6px;transition:width .5s ease;"></div></div><div style="display:flex;justify-content:space-between;margin-top:6px;"><div style="font-size:10px;color:#333;font-family:'JetBrains Mono',monospace;">DAY 1</div><div style="font-size:10px;color:#444;font-family:'JetBrains Mono',monospace;">DAY 30</div><div style="font-size:10px;color:#444;font-family:'JetBrains Mono',monospace;">DAY 60</div><div style="font-size:10px;color:#333;font-family:'JetBrains Mono',monospace;">DAY 90</div></div></div>
+        <div style="display:flex;gap:8px;margin-bottom:24px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:4px;">
+          <button id="ptab0" onclick="showPhase(0)" style="flex:1;background:rgba(255,255,255,0.12);border:none;border-radius:9px;padding:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:#fff;cursor:pointer;transition:all .2s;">&#128218; Days 1-30<br><span style="font-size:10px;font-weight:400;opacity:.7;">Foundation</span></button>
+          <button id="ptab1" onclick="showPhase(1)" style="flex:1;background:transparent;border:none;border-radius:9px;padding:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:#555;cursor:pointer;transition:all .2s;">&#128269; Days 31-60<br><span style="font-size:10px;font-weight:400;opacity:.7;">Deep Dive</span></button>
+          <button id="ptab2" onclick="showPhase(2)" style="flex:1;background:transparent;border:none;border-radius:9px;padding:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:#555;cursor:pointer;transition:all .2s;">&#128640; Days 61-90<br><span style="font-size:10px;font-weight:400;opacity:.7;">Mastery</span></button>
+        </div>
+        <div id="weeklyCards" style="display:flex;flex-direction:column;gap:14px;"></div>
+        <div style="margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.08);text-align:center;"><button onclick="resetTrack()" style="background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 20px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#555;cursor:pointer;transition:all .2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#555'">Switch Learning Track</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- README MODAL -->
+  <div class="moverlay" id="mdlReadme" onclick="bgClose(event,'mdlReadme')">
+    <div class="mbox">
+      <div class="mhdr"><div class="mhdr-t">About <em>Finance Intelligence</em></div><button class="mclose" onclick="closeMdl('mdlReadme')">&times;</button></div>
+      <div class="mbody">
+        <div class="msec"><div class="msec-lbl">What is this?</div><div class="msec-txt">The <b>Finance Intelligence Platform</b> is a free AI-powered daily briefing tool built exclusively for finance and banking professionals in Indonesia. Every morning it generates fresh, rich intelligence on your chosen topic — tailored to your interests. Think of it as your personal Bloomberg Terminal meets a leadership coach, available in under 2 minutes every day.</div></div>
+        <div class="mdivider"></div>
+        <div class="msec"><div class="msec-lbl">7 Topic Channels</div>
+          <div class="mgrid">
+            <div class="mfeat"><div class="mf-i">🤖</div><div class="mf-t">AI for Leaders</div><div class="mf-d">How AI is reshaping banking, fintech, and leadership with Indonesia context.</div></div>
+            <div class="mfeat"><div class="mf-i">🏦</div><div class="mf-t">Banking &amp; Finance</div><div class="mf-d">Global and Indonesian banking, OJK regulation, and financial markets.</div></div>
+            <div class="mfeat"><div class="mf-i">📈</div><div class="mf-t">Indonesia Economy</div><div class="mf-d">Bank Indonesia policy, Rupiah, inflation signals, and sector opportunities.</div></div>
+            <div class="mfeat"><div class="mf-i">🎯</div><div class="mf-t">Strategy &amp; Leadership</div><div class="mf-d">Leadership trends, team management, and career positioning for 2026.</div></div>
+            <div class="mfeat"><div class="mf-i">🌐</div><div class="mf-t">Geopolitics</div><div class="mf-d">Global power shifts, trade risks, and geopolitical impacts on Indonesia.</div></div>
+            <div class="mfeat"><div class="mf-i">🇮🇩</div><div class="mf-t">Indonesia Updates</div><div class="mf-d">Government policy, OJK regulation, business developments, and local opportunities.</div></div>
+            <div class="mfeat"><div class="mf-i">🚀</div><div class="mf-t">Self-Development</div><div class="mf-d">Habits, productivity systems, and career growth for finance professionals.</div></div>
+          </div>
+        </div>
+        <div class="mdivider"></div>
+        <div class="msec"><div class="msec-lbl">How to use it</div>
+          <ul class="msteps">
+            <li>Enter your name on first visit to personalize your briefing.</li>
+            <li>You land on the Home dashboard showing all 7 topic channels.</li>
+            <li>Click any topic card to open its focused intelligence briefing.</li>
+            <li>Each briefing has a headline insight, 3 key bullets, a leadership angle, and a deep dive.</li>
+            <li>Briefings are cached for 6 hours — instant loads on repeat visits.</li>
+            <li>Share any insight directly to WhatsApp or copy it for use in meetings.</li>
+            <li>Hit <b>Fetch Fresh</b> to force a new briefing anytime.</li>
+          </ul>
+        </div>
+        <div class="mdivider"></div>
+        <div class="msec"><div class="msec-lbl">Built by</div><div class="msec-txt">Built by <b>Jufri Sitompul</b> for the Finance &amp; Banking team in Bekasi, Indonesia. Powered by Claude AI (Anthropic) — completely free. For feedback, tap the <b>Feedback</b> button above.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEEDBACK MODAL -->
+  <div class="moverlay" id="mdlFeedback" onclick="bgClose(event,'mdlFeedback')">
+    <div class="mbox">
+      <div class="mhdr"><div class="mhdr-t">Share Your <em>Feedback</em></div><button class="mclose" onclick="closeMdl('mdlFeedback')">&times;</button></div>
+      <div class="mbody">
+        <div id="fbForm">
+          <div class="msec-txt" style="margin-bottom:22px;">Your feedback helps improve this platform for the whole team.</div>
+          <div class="fb-field"><label class="fb-lbl">Your Name</label><input class="fb-inp" id="fbName" type="text" placeholder="e.g. Budi"/></div>
+          <div class="fb-field"><label class="fb-lbl">Rating</label><div class="fb-stars"><button class="fb-star" data-v="1" onclick="setRating(1)">&#9733;</button><button class="fb-star" data-v="2" onclick="setRating(2)">&#9733;</button><button class="fb-star" data-v="3" onclick="setRating(3)">&#9733;</button><button class="fb-star" data-v="4" onclick="setRating(4)">&#9733;</button><button class="fb-star" data-v="5" onclick="setRating(5)">&#9733;</button></div></div>
+          <div class="fb-field"><label class="fb-lbl">Feedback Type</label><div class="fb-chips"><button class="fb-chip" onclick="togChip(this)">Content Quality</button><button class="fb-chip" onclick="togChip(this)">Missing Topics</button><button class="fb-chip" onclick="togChip(this)">Design</button><button class="fb-chip" onclick="togChip(this)">Feature Request</button><button class="fb-chip" onclick="togChip(this)">Bug</button><button class="fb-chip" onclick="togChip(this)">General</button></div></div>
+          <div class="fb-field"><label class="fb-lbl">Your Message</label><textarea class="fb-ta" id="fbMsg" placeholder="Share your thoughts, ideas, or suggestions..."></textarea></div>
+          <div class="fb-field"><label class="fb-lbl">Most Valuable Topic</label><div class="fb-chips" id="fbSecs"><button class="fb-chip" onclick="togChip(this)">AI for Leaders</button><button class="fb-chip" onclick="togChip(this)">Banking &amp; Finance</button><button class="fb-chip" onclick="togChip(this)">Indonesia Economy</button><button class="fb-chip" onclick="togChip(this)">Strategy &amp; Leadership</button><button class="fb-chip" onclick="togChip(this)">Geopolitics</button><button class="fb-chip" onclick="togChip(this)">Indonesia Updates</button><button class="fb-chip" onclick="togChip(this)">Self-Development</button></div></div>
+          <button class="fb-submit" id="fbSub" onclick="submitFb()">Send Feedback to Jufri &rarr;</button>
+        </div>
+        <div class="fb-ok" id="fbOk"><div class="fb-ok-icon">&#10003;</div><div class="fb-ok-txt">Thank you!<br><span>Jufri will review your feedback and use it to improve the platform.</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// CACHE CONFIG
+// ═══════════════════════════════════════════════
+var CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+var CACHE_PREFIX = 'fip_brief_v2_';
+
+function cacheKey(topicKey) {
+  return CACHE_PREFIX + topicKey;
+}
+
+function saveToCache(topicKey, data) {
+  try {
+    var entry = { data: data, ts: Date.now() };
+    localStorage.setItem(cacheKey(topicKey), JSON.stringify(entry));
+  } catch(e) { /* storage full — fail silently */ }
+}
+
+function loadFromCache(topicKey) {
+  try {
+    var raw = localStorage.getItem(cacheKey(topicKey));
+    if (!raw) return null;
+    var entry = JSON.parse(raw);
+    if (Date.now() - entry.ts > CACHE_TTL_MS) {
+      localStorage.removeItem(cacheKey(topicKey));
+      return null;
+    }
+    return { data: entry.data, ts: entry.ts };
+  } catch(e) { return null; }
+}
+
+function clearTopicCache(topicKey) {
+  localStorage.removeItem(cacheKey(topicKey));
+}
+
+function formatCacheAge(ts) {
+  var mins = Math.round((Date.now() - ts) / 60000);
+  if (mins < 2) return 'Cached just now';
+  if (mins < 60) return 'Cached ' + mins + ' min ago';
+  var hrs = Math.floor(mins / 60);
+  return 'Cached ' + hrs + 'h ago — refreshes in ' + (6 - hrs) + 'h';
+}
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+var profile = { name: '', topic: 'ai' };
+var savedItems = {}, refs = [];
+var currentTopic = null;
+var lastCacheTs = null;
+
+// ═══════════════════════════════════════════════
+// TOPIC DATA
+// ═══════════════════════════════════════════════
+var TOPICS = {
+  ai: {
+    key:'ai',icon:'🤖',name:'AI for Leaders',tag:'TECHNOLOGY',color:'#4f9eff',
+    sub:'How artificial intelligence is reshaping banking operations, fintech, workforce strategy, and leadership — with deep Indonesia context.',
+    rule:'linear-gradient(90deg,#4f9eff,#8b6dff)',
+    reflect:['How is AI changing the most repetitive parts of your team\'s daily work — and are you leading that change or reacting to it?','Which AI tool could your team adopt this month that would save the most time?','If AI replaced 30% of your team\'s tasks tomorrow, what would you want them to focus on instead?'],
+    prompts:[
+      {lbl:'AI Adoption in Indonesian Banking',q:'Write a sharp intelligence briefing on AI adoption in Indonesian banking. Focus on: which specific banks (BRI, BCA, Mandiri, BNI, CIMB Niaga) are deploying AI and exactly what for, specific percentage improvements in fraud detection or credit scoring, OJK AI governance requirements, what is failing and why, and the measurable gap between leading and lagging banks.'},
+      {lbl:'AI Tools Transforming Finance Work',q:'Write a sharp intelligence briefing on AI tools transforming daily finance work in Indonesia. Cover: specific named tools with realistic time savings, which Indonesian banks or fintechs deploy them, workflows being eliminated vs augmented, hidden adoption costs, and what skills professionals must build in the next 3 years.'},
+      {lbl:'AI Regulation & Governance',q:'Write a sharp intelligence briefing on AI regulation in Indonesian financial services. Cover: specific OJK AI circulars and requirements, Bank Indonesia stance on algorithmic decision-making, MAS Singapore FEAT principles influencing Indonesian regulators, EU AI Act implications, specific compliance risks, and a practical governance framework for a mid-size Indonesian bank.'},
+      {lbl:'Future of Work: AI & Banking Teams',q:'Write a sharp intelligence briefing on how AI is restructuring banking teams in Indonesia. Cover: specific roles being eliminated or shrunk, which roles are becoming more strategic, McKinsey or WEF research on banking job displacement timelines, how leading Indonesian banks are managing workforce transitions, what reskilling works vs fails, and what a finance team leader should do in the next 6 months.'}
+    ]
+  },
+  fin: {
+    key:'fin',icon:'🏦',name:'Banking & Finance',tag:'INDUSTRY',color:'#d4a843',
+    sub:'Key developments in global and Indonesian banking, OJK regulations, digital banking trends, credit markets, and financial product innovation.',
+    rule:'linear-gradient(90deg,#d4a843,#ff8c42)',
+    reflect:['What is the biggest challenge your bank faces that the industry is not talking about openly?','Which competitor or fintech is doing something your organization should be doing but isn\'t — and why not?','What regulatory change in the next 12 months are you most prepared for — and least prepared for?'],
+    prompts:[
+      {lbl:'Indonesian Banking Sector Overview',q:'Write a sharp intelligence briefing on the current state of Indonesian banking. Include: latest OJK figures on NPL ratios, CAR levels, and credit growth, which banks are outperforming and why, QRIS transaction volumes and fee income implications, NIM compression trends, and what cost-to-income ratios reveal about operational efficiency gaps.'},
+      {lbl:'Digital Banking & Fintech Disruption',q:'Write a sharp intelligence briefing on digital banking and fintech disruption in Indonesia in 2026. Cover: which neobanks are gaining users with MAU figures, what traditional banks are doing to respond, OJK fintech licensing status, embedded finance partnerships, BNPL growth and credit risk, and winner-take-most dynamics for smaller banks.'},
+      {lbl:'Credit Markets & Lending Trends',q:'Write a sharp intelligence briefing on Indonesian credit markets. Cover: consumer credit growth by segment with OJK figures, MSME credit gap, NPL trends by sector and early stress signals, property loan growth vs BI LTV regulations, P2P lending default rates and OJK enforcement actions, and NIM compression from the rate environment.'},
+      {lbl:'Global Banking Trends Affecting Indonesia',q:'Write a sharp intelligence briefing on global banking trends most relevant to Indonesian professionals. Cover: what JPMorgan, DBS, and UOB are doing in AI that Indonesian banks are behind on, Basel IV implementation and impact on Indonesian capital ratios, Project mBridge and CBDC implications, OJK ESG disclosure requirements, and how rising US rates correlate with Indonesian capital outflows.'}
+    ]
+  },
+  eco: {
+    key:'eco',icon:'📈',name:'Indonesia Economy',tag:'MACRO',color:'#00d4aa',
+    sub:'Bank Indonesia monetary policy, Rupiah movements, inflation signals, GDP growth, trade balance, and macro trends affecting the financial sector.',
+    rule:'linear-gradient(90deg,#00d4aa,#00e5a0)',
+    reflect:['How is the current macro environment affecting your organization\'s strategy or your clients\' financial decisions?','Which economic indicator are you watching most closely this quarter — and why?','If BI raises or cuts rates next meeting, is your team positioned to respond quickly?'],
+    prompts:[
+      {lbl:'Bank Indonesia Monetary Policy',q:'Write a sharp intelligence briefing on Bank Indonesia monetary policy. Cover: the current BI rate level and reasoning, core vs headline inflation vs 2-3% target, how BI is balancing Rupiah defense against growth support, rate transmission to bank lending rates, what SRBI absorption means for liquidity, and the rate path outlook for the next two quarters.'},
+      {lbl:'Rupiah & External Position',q:'Write a sharp intelligence briefing on the Indonesian Rupiah and external position. Cover: Rupiah performance vs USD and SGD with specific rate levels, foreign reserve adequacy, current account balance, FDI inflows by sector, commodity export performance (CPO, coal, nickel), and what the Fed rate path means for Rupiah pressure in the next 6 months.'},
+      {lbl:'Indonesia Growth & Consumer Economy',q:'Write a sharp intelligence briefing on Indonesia GDP growth and consumer economy. Cover: latest GDP growth rate and which sectors drive vs drag it, household consumption trends, middle class size and what economists say about its shrinkage, retail sales and consumer confidence data, unemployment rates, and what consumption trends mean for consumer credit demand in West Java.'},
+      {lbl:'Fiscal Policy & Government Spending',q:'Write a sharp intelligence briefing on Indonesia fiscal policy and APBN. Cover: APBN realization rate and key variances, which infrastructure projects are absorbing most spending, subsidy reform progress and fiscal savings, tax revenue vs target, government debt-to-GDP and SBN issuance outlook, and what government bond supply means for bank portfolio yields.'}
+    ]
+  },
+  led: {
+    key:'led',icon:'🎯',name:'Strategy & Leadership',tag:'GROWTH',color:'#00e5a0',
+    sub:'Modern leadership frameworks, team management, organizational design, career positioning, and strategic thinking for finance professionals in 2026.',
+    rule:'linear-gradient(90deg,#00e5a0,#4f9eff)',
+    reflect:['What is the gap between the leader you are today and the leader your team needs you to be in 2 years?','What decision are you avoiding right now that your team is waiting for you to make?','How are you investing in your own leadership development this quarter — specifically?'],
+    prompts:[
+      {lbl:'Leadership in the AI Era',q:'Write a sharp intelligence briefing on leadership in the AI era for Indonesian banking leaders. Cover: how top banking executives are using AI in decision-making, which leadership competencies are becoming more valuable as AI automates analysis, what hybrid human-AI team management looks like day-to-day, leading teams who fear job displacement, and what Indonesian banking culture must change to extract AI value.'},
+      {lbl:'Talent & Team Development',q:'Write a sharp intelligence briefing on talent management in Indonesian financial services. Cover: specific skills commanding premium salaries now, what is actually driving high performers to leave vs stay, what research says Gen Z employees value from managers, failure modes of learning cultures in Indonesian corporates, and what a 90-day team development sprint looks like for a finance leader.'},
+      {lbl:'Strategic Decision-Making',q:'Write a sharp intelligence briefing on strategic decision-making for Indonesian banking leaders. Cover: cognitive biases most common in banking credit and risk decisions with research backing, how DBS and OCBC built decision protocols that improved measurable outcomes, when data should override intuition and vice versa, BI and OJK scenario planning techniques, and how to reduce hierarchy bias in Indonesian corporate decision-making.'},
+      {lbl:'Career Growth & Executive Presence',q:'Write a sharp intelligence briefing on career advancement for Indonesian banking professionals. Cover: specific patterns that distinguish those promoted to VP and above, how visibility works differently in Indonesian vs Western corporate hierarchy, the sponsorship gap and how to build real sponsors, what executive presence means in Indonesian banking culture specifically, and skills becoming table stakes for senior banking roles.'}
+    ]
+  },
+  geo: {
+    key:'geo',icon:'🌐',name:'Geopolitics',tag:'GLOBAL',color:'#ff6b6b',
+    sub:'Global power shifts, US-China tensions, ASEAN developments, trade wars, sanctions, and geopolitical risks that directly impact Indonesian banking and investment.',
+    rule:'linear-gradient(90deg,#ff6b6b,#ff8c42)',
+    reflect:['Which geopolitical risk do you think your organization is most underestimating right now?','How does global instability create opportunity as well as risk for Indonesian finance professionals?','If US-China tensions escalated significantly next month, what would be the first impact on your work?'],
+    prompts:[
+      {lbl:'US-China Tensions & Indonesia',q:'Write a sharp intelligence briefing on US-China tensions and their measurable impact on Indonesia. Cover: latest tariff and technology restriction developments, how Indonesia is threading the needle between the two powers, which Indonesian export sectors are gaining or losing from US-China decoupling, FDI redirection flows into Indonesia, and specific risks Indonesian banks with trade finance exposure face.'},
+      {lbl:'ASEAN & Regional Geopolitics',q:'Write a sharp intelligence briefing on ASEAN geopolitics relevant to Indonesian banking. Cover: South China Sea tension and trade route disruption risk, RCEP utilization rates and implementation gaps, ASEAN financial integration progress (QR payment linkages, local currency settlement), Indonesia CPTPP prospects, and how regional instability scenarios would affect Indonesian bank liquidity and foreign funding.'},
+      {lbl:'Global Trade & Supply Chain Risks',q:'Write a sharp intelligence briefing on global trade tensions and supply chain risks for Indonesia. Cover: US-EU-China tariff impacts on Indonesian commodity exports, nickel and critical mineral geopolitics and Indonesia downstream processing, shipping route disruptions and freight rate movements, how trade finance demand at Indonesian banks is shifting by sector, and what a prolonged trade war means for the Rupiah.'},
+      {lbl:'Sanctions, Currency Wars & Financial Geopolitics',q:'Write a sharp intelligence briefing on financial geopolitics, sanctions, and de-dollarization. Cover: US sanctions landscape and Indonesian correspondent banking secondary risks, BRICS currency basket progress vs real de-dollarization data, digital yuan cross-border pilot results for Indonesian-Chinese trade, BI local currency settlement progress with ASEAN partners, and what these shifts mean for Indonesian banks USD liquidity management.'}
+    ]
+  },
+  idn: {
+    key:'idn',icon:'🇮🇩',name:'Indonesia Updates',tag:'INDONESIA',color:'#e63946',
+    sub:'Latest Indonesian government policy, cabinet decisions, OJK regulatory changes, major business developments, and domestic opportunities for finance professionals.',
+    rule:'linear-gradient(90deg,#e63946,#c1121f)',
+    reflect:['What recent Indonesian policy change is creating the biggest opportunity or risk for your organization that you haven\'t fully acted on yet?','Which Indonesian government initiative in the next 12 months could most benefit your clients or business unit?','How well is your team tracking local regulatory changes — and is that good enough?'],
+    prompts:[
+      {lbl:'Prabowo Government Policy Updates',q:'Write a sharp intelligence briefing on Prabowo administration policy and banking sector implications. Cover: recent cabinet decisions and their direct banking impact, food estate and downstream industrialization progress, the 8% GDP growth target credibility gap, MBG program cost and financing, and FDI deals signed with major investors.'},
+      {lbl:'OJK & Regulatory Developments',q:'Write a sharp intelligence briefing on OJK regulatory developments. Cover: specific recent OJK circulars with regulation numbers and compliance deadlines, the bank consolidation agenda and merger pressures, financial inclusion metric progress, POJK on digital banking new requirements, consumer protection enforcement actions and penalties, and the top 3 compliance priorities for a banking operations team in 2025-2026.'},
+      {lbl:'Indonesian Business & Investment Climate',q:'Write a sharp intelligence briefing on Indonesian business and investment climate. Cover: latest BKPM FDI realization data with top investing countries and sectors, major infrastructure projects under construction and syndicated bank lenders, major conglomerate strategic moves and M&A activity, ease of doing business bottlenecks that are deterring investors, and what this means for project finance and corporate banking revenue.'},
+      {lbl:'Social & Digital Trends in Indonesia',q:'Write a sharp intelligence briefing on social and digital trends reshaping Indonesian banking customers. Cover: QRIS transaction value growth and merchant adoption, e-commerce GMV and platform dominance, Gen Z banking behavior research, social commerce and paylater behavior and credit risk implications, smartphone banking adoption by demographic, and what these trends mean for branch network strategy and digital product investment.'}
+    ]
+  },
+  sdf: {
+    key:'sdf',icon:'🚀',name:'Self-Development',tag:'PERSONAL',color:'#8b6dff',
+    sub:'Habits, mindset, productivity systems, learning strategies, and career growth tactics specifically for ambitious finance and banking professionals.',
+    rule:'linear-gradient(90deg,#8b6dff,#ff5f7e)',
+    reflect:['What is one habit you know you should build but keep postponing — and what is the real reason you haven\'t started?','How much of your week is spent on deep work vs shallow reactive tasks — and is that ratio right?','What skill are you building right now that will make you significantly more valuable in 3 years?'],
+    prompts:[
+      {lbl:'High-Performance Habits for Finance Professionals',q:'Write a sharp intelligence briefing on high-performance habits for finance professionals backed by research. Cover: sleep research on cognitive performance and decision quality, decision fatigue research and how banking leaders can redesign their day, specific morning routines of named top finance executives with evidence behind each element, habits that reduce cortisol in high-pressure banking roles, and energy management vs time management for a team leader in Bekasi.'},
+      {lbl:'Deep Work & Productivity Systems',q:'Write a sharp intelligence briefing on deep work and productivity for banking professionals. Cover: Cal Newport deep work research on knowledge worker focus time, Microsoft and Atlassian research on meeting culture cognitive costs, time-blocking for a finance leader whose calendar is controlled by others, specific AI tools reclaiming the most hours in financial services roles, and productivity failure modes in Indonesian corporate culture and how to fix them.'},
+      {lbl:'Continuous Learning & Skill Building',q:'Write a sharp intelligence briefing on continuous learning for Indonesian banking professionals. Cover: the top 5 skills commanding salary premiums in Indonesian banking in 2026, spaced repetition research vs cramming with retention data and 30-minute-a-day application, the best platforms and resources for finance learning with time investment vs career ROI, how to use Claude or ChatGPT as a personal finance tutor with specific prompt approaches, and a concrete 90-day learning plan structure for a finance team leader.'},
+      {lbl:'Mental Resilience & Stress Management',q:'Write a sharp intelligence briefing on mental resilience for banking professionals backed by research. Cover: burnout prevalence data in financial services, cortisol and allostatic load research on chronic banking stress and cognitive impact, resilience practices used by named banking executives with 20+ year careers, neuroscience of stress recovery (what actually works vs what feels like it works), and the specific stress signatures of Indonesian banking work culture and evidence-based antidotes.'}
+    ]
+  }
+};
+
+var MSGS = ['Generating your intelligence briefing...','Analyzing Indonesian market context...','Synthesizing key insights...','Applying leadership lens...','Almost ready...'];
+
+// ═══════════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════════
+function tickClock() {
+  var n = new Date();
+  var hc = document.getElementById('homeClock');
+  if (hc) hc.textContent = ('0'+n.getHours()).slice(-2) + ':' + ('0'+n.getMinutes()).slice(-2);
+}
+tickClock(); setInterval(tickClock, 30000);
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+window.onload = function() {
+  var p = localStorage.getItem('fip_p3');
+  if (p) {
+    try { profile = JSON.parse(p); launchApp(); return; } catch(e) { localStorage.removeItem('fip_p3'); }
+  }
+  document.getElementById('sProfile').style.display = 'flex';
+  setInterval(function() {
+    var val = document.getElementById('pName').value.trim();
+    var btn = document.getElementById('pBtn');
+    if (!btn) return;
+    btn.style.opacity = val ? '1' : '0.35';
+    btn.style.cursor = val ? 'pointer' : 'default';
+  }, 100);
+  var pn = document.getElementById('pName');
+  if (pn) { pn.addEventListener('keydown', function(e) { if (e.key === 'Enter') doStart(); }); }
+};
+
+function doStart() {
+  var n = document.getElementById('pName').value.trim();
+  if (!n) { toast('Please type your name to continue.'); document.getElementById('pName').focus(); return; }
+  profile.name = n;
+  profile.topic = profile.topic || 'ai';
+  localStorage.setItem('fip_p3', JSON.stringify(profile));
+  document.getElementById('sProfile').style.display = 'none';
+  launchApp();
+}
+
+function launchApp() {
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('navN').textContent = profile.name;
+  document.getElementById('homeN').textContent = profile.name;
+  function getGreeting() {
+    var h = new Date().getHours();
+    if (h >= 5 && h < 12) return 'Good morning';
+    if (h >= 12 && h < 15) return 'Good afternoon';
+    if (h >= 15 && h < 18) return 'Good evening';
+    return 'Good night';
+  }
+  function updateGreeting() {
+    var ge = document.getElementById('greetingText');
+    var he = document.getElementById('homeGreetWord');
+    if (ge) ge.textContent = getGreeting() + ',';
+    if (he) he.textContent = getGreeting() + ',';
+  }
+  updateGreeting(); setInterval(updateGreeting, 60000);
+  showHome();
+}
+
+function showHome() {
+  document.getElementById('pgHome').style.display = 'block';
+  document.getElementById('pgTopic').style.display = 'none';
+  document.getElementById('pgPath').style.display = 'none';
+  currentTopic = null; window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════════════
+// TOPIC OPEN — CACHE-AWARE
+// ═══════════════════════════════════════════════
+function openTopic(key) {
+  currentTopic = key;
+  var t = TOPICS[key];
+  document.getElementById('pgHome').style.display = 'none';
+  document.getElementById('pgPath').style.display = 'none';
+  document.getElementById('pgTopic').style.display = 'block';
+  // Hero
+  document.getElementById('tphEyebrow').textContent = t.tag + ' — Intelligence Briefing';
+  document.getElementById('tphTitle').innerHTML = t.icon + ' <em style="color:'+t.color+';font-style:italic;">'+t.name+'</em>';
+  document.getElementById('tphSub').textContent = t.sub;
+  document.getElementById('tphRule').style.background = t.rule;
+  document.getElementById('tphRule').style.height = '2px';
+  document.getElementById('tpName').textContent = profile.name;
+  document.getElementById('pgFoot').textContent = 'FINANCE INTELLIGENCE PLATFORM \u00B7 ' + t.name.toUpperCase() + ' \u00B7 ' + profile.name.toUpperCase();
+  var rArr = t.reflect;
+  document.getElementById('rfQ').textContent = rArr[new Date().getDay() % rArr.length];
+  renderOtherTopics(key);
+  window.scrollTo(0,0);
+
+  // Check cache first
+  var cached = loadFromCache(key);
+  if (cached) {
+    lastCacheTs = cached.ts;
+    updateCacheUI(true, cached.ts);
+    renderContent(key, cached.data);
+  } else {
+    lastCacheTs = null;
+    updateCacheUI(false, null);
+    loadTopic();
+  }
+}
+
+function updateCacheUI(isCached, ts) {
+  var bar = document.getElementById('cacheStatusBar');
+  var badge = document.getElementById('cacheBadge');
+  var badgeText = document.getElementById('cacheBadgeText');
+  var expiresText = document.getElementById('cacheExpiresText');
+  bar.style.display = 'flex';
+  if (isCached) {
+    badge.className = 'cache-badge cached';
+    badgeText.textContent = 'Cached';
+    expiresText.textContent = formatCacheAge(ts);
+  } else {
+    badge.className = 'cache-badge live';
+    badgeText.textContent = 'Live';
+    expiresText.textContent = 'Fetching fresh intelligence...';
+  }
+}
+
+function clearCacheAndReload() {
+  if (!currentTopic) return;
+  clearTopicCache(currentTopic);
+  lastCacheTs = null;
+  updateCacheUI(false, null);
+  loadTopic();
+  toast('Cache cleared — fetching fresh briefing...');
+}
+
+function forceReload() {
+  if (!currentTopic) return;
+  clearTopicCache(currentTopic);
+  lastCacheTs = null;
+  updateCacheUI(false, null);
+  loadTopic();
+}
+
+function renderOtherTopics(activeKey) {
+  var c = document.getElementById('otherTopicBtns');
+  c.innerHTML = '';
+  Object.keys(TOPICS).forEach(function(k) {
+    if (k === activeKey) return;
+    var t = TOPICS[k];
+    var btn = document.createElement('button');
+    btn.className = 'ot-btn';
+    btn.innerHTML = '<div class="ot-dot" style="background:'+t.color+'"></div>' + t.icon + ' ' + t.name;
+    btn.onclick = function() { openTopic(k); };
+    c.appendChild(btn);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// CLAUDE API CALL — NEW 4-PART FORMAT
+// ═══════════════════════════════════════════════
+function callSection(topicName, sectionLabel, instruction) {
+  var sys = 'You are a senior financial intelligence analyst writing for a finance team leader at SMBC Indonesia in Bekasi. Return ONLY valid JSON, no markdown, no backticks, no extra text. All string values must be on single continuous lines with no line breaks inside them.';
+
+  var usr = 'Topic: ' + topicName + '\nSection: ' + sectionLabel + '\n\n' + instruction + '\n\n'
+    + 'Return ONLY this JSON structure with real, specific content:\n'
+    + '{"hl":"One powerful headline insight — specific, data-driven, 15-20 words max",'
+    + '"bl":["Key insight 1 with specific data point or named institution, 40-60 words","Key insight 2 with specific data point or named institution, 40-60 words","Key insight 3 with specific data point or named institution, 40-60 words"],'
+    + '"ins":"Leadership angle: what this means specifically for a finance team leader in Indonesian banking. Analytical, direct, not generic. 3-4 sentences.",'
+    + '"rq":"One sharp reflection question this section raises for a finance professional. One sentence ending in a question mark.",'
+    + '"dd":"Deep dive: 5-7 sentences covering mechanisms, data, implications and one concrete action step a finance leader can take this week."}';
+
+  return fetch('/api/claude-proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system: sys,
+      messages: [{ role: 'user', content: usr }],
+      max_tokens: 1500
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.error) throw new Error(data.error);
+    var raw = data.text || '';
+    if (!raw) throw new Error('Empty response from AI.');
+    return parseResponse(raw);
+  });
+}
+
+function parseResponse(raw) {
+  raw = raw.replace(/```json/gi,'').replace(/```/g,'').trim();
+  raw = raw.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g,'');
+  var out = '', inStr = false, esc = false;
+  for (var i = 0; i < raw.length; i++) {
+    var c = raw[i];
+    if (esc) { out += c; esc = false; continue; }
+    if (c === '\\') { out += c; if (inStr) esc = true; continue; }
+    if (c === '"' && !esc) { inStr = !inStr; out += c; continue; }
+    if (inStr && (c === '\n' || c === '\r')) { out += ' '; continue; }
+    out += c;
+  }
+  var s = out.indexOf('{'), e = out.lastIndexOf('}');
+  if (s === -1 || e === -1) throw new Error('No JSON found in response.');
+  return JSON.parse(out.slice(s, e+1));
+}
+
+// ═══════════════════════════════════════════════
+// LOAD TOPIC — SEQUENTIAL QUEUE (RATE LIMIT SAFE)
+// ═══════════════════════════════════════════════
+function loadTopic() {
+  if (!currentTopic) return;
+  var key = currentTopic;
+  var t = TOPICS[key];
+  var rb = document.getElementById('rBtn');
+  var ldr = document.getElementById('ldr');
+  var ebx = document.getElementById('ebx');
+  rb.disabled = true; rb.classList.add('spin');
+  ldr.classList.add('on'); ebx.classList.remove('on');
+
+  // Skeleton cards immediately — one per section, preserves layout
+  showSkel(key);
+
+  var mi = 0, iv = setInterval(function() {
+    mi = (mi+1) % MSGS.length;
+    document.getElementById('lTxt').textContent = MSGS[mi];
+  }, 2000);
+
+  // Parallel + progressive — all 4 calls fire simultaneously
+  // Each section renders the moment its call completes
+  var merged = {};
+  var completed = 0;
+  var total = t.prompts.length;
+  var hasError = false;
+
+  function onAllDone() {
+    clearInterval(iv);
+    ldr.classList.remove('on');
+    rb.disabled = false; rb.classList.remove('spin');
+    var rArr = t.reflect;
+    merged.reflectQ = rArr[new Date().getDay() % rArr.length];
+    saveToCache(key, merged);
+    lastCacheTs = Date.now();
+    updateCacheUI(true, lastCacheTs);
+    document.getElementById('rfQ').textContent = merged.reflectQ;
+  }
+
+  function onSectionError(err) {
+    if (hasError) return;
+    hasError = true;
+    clearInterval(iv);
+    ldr.classList.remove('on');
+    rb.disabled = false; rb.classList.remove('spin');
+    var eb = document.getElementById('ebx');
+    eb.classList.add('on');
+    eb.textContent = 'Could not load briefing: ' + err.message + ' — Tap Refresh to try again.';
+  }
+
+  // 200ms stagger between call starts — avoids exact simultaneous burst
+  t.prompts.forEach(function(p, idx) {
+    setTimeout(function() {
+      if (hasError) return;
+      callSection(t.name, p.lbl, p.q)
+      .then(function(r) {
+        if (hasError) return;
+        merged['s'+idx] = Object.assign({ lbl: p.lbl }, r);
+        renderSingleCard(key, idx, r, p);
+        completed++;
+        if (completed === total) onAllDone();
+      })
+      .catch(function(err) { onSectionError(err); });
+    }, idx * 200);
+  });
+}
+
+function showSkel(key) {
+  var g = document.getElementById('contentStack'); g.innerHTML = '';
+  var t = TOPICS[key];
+  for (var i = 0; i < 4; i++) {
+    var d = document.createElement('div'); d.className = 'bcard';
+    d.innerHTML = '<div class="bcard-accent" style="background:'+t.rule+'"></div>'
+      + '<div class="bcard-headline-zone"><div class="sk w45" style="margin-bottom:12px;height:10px"></div><div class="sk w80" style="height:16px;margin-bottom:6px"></div><div class="sk w60" style="height:16px"></div></div>'
+      + '<div class="bcard-insights-zone"><div class="sk w30" style="height:9px;margin-bottom:16px"></div><div class="sk w90" style="height:12px;margin-bottom:8px"></div><div class="sk w80" style="height:12px;margin-bottom:8px"></div><div class="sk w70" style="height:12px"></div></div>';
+    g.appendChild(d);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// PROGRESSIVE RENDER — replaces individual skeleton card
+// ═══════════════════════════════════════════════
+function renderSingleCard(key, idx, sec, p) {
+  var t = TOPICS[key];
+  var g = document.getElementById('contentStack');
+  var skels = g.querySelectorAll('.bcard');
+  var target = skels[idx];
+  if (!target) return;
+  var svKey = key + '_' + idx;
+  var isSv = savedItems[svKey];
+  var buls = (sec.bl || []).map(function(b) {
+    return '<li style="--bcolor:' + t.color + '">' + b + '</li>';
+  }).join('');
+  target.style.transition = 'opacity .2s ease';
+  target.style.opacity = '0';
+  setTimeout(function() {
+    var ddId = 'dd_' + key + '_' + idx;
+    var saveClass = 'act-save' + (isSv ? ' sv' : '');
+    var html = '<div class="bcard-accent" style="background:' + t.rule + '"></div>';
+    html += '<div class="bcard-headline-zone">';
+    html += '<div class="bcard-section-label" style="color:' + t.color + '">' + p.lbl + '</div>';
+    if (sec.hl) html += '<div class="bcard-headline">' + sec.hl + '</div>';
+    html += '</div>';
+    html += '<div class="bcard-insights-zone">';
+    html += '<div class="bcard-insights-label">Key insights</div>';
+    if (buls) html += '<ul class="bcard-insights-list">' + buls + '</ul>';
+    html += '</div>';
+    if (sec.ins) {
+      html += '<div class="bcard-leadership-zone">';
+      html += '<div class="bcard-leadership-tag" style="color:' + t.color + '"><span style="width:14px;height:1px;background:' + t.color + ';display:inline-block;"></span>Leadership angle</div>';
+      html += '<div class="bcard-leadership-txt">' + sec.ins + '</div>';
+      html += '</div>';
+    }
+    if (sec.rq) {
+      html += '<div class="bcard-reflect-zone">';
+      html += '<div class="bcard-reflect-tag">Reflect on this</div>';
+      html += '<div class="bcard-reflect-q">' + sec.rq + '</div>';
+      html += '</div>';
+    }
+    html += '<div class="bcard-actions-zone">';
+    html += '<button class="ddtog" onclick="togDD(this,\'' + ddId + '\',this.closest(\'.bcard\'))">';
+    html += '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
+    html += 'Deep Dive</button>';
+    html += '<button class="' + saveClass + '" onclick="toggleSave(\'' + svKey + '\',\'' + key + '\',' + idx + ',this)" title="Save">&#128278;</button>';
+    html += '<button class="shbtn wa" onclick="doWA(\'' + key + '\',' + idx + ')">&#128242; WhatsApp</button>';
+    html += '<button class="shbtn" onclick="doCopy(\'' + key + '\',' + idx + ')">&#128203; Copy</button>';
+    html += '</div>';
+    html += '<div class="ddc" id="' + ddId + '"></div>';
+    target.innerHTML = html;
+    target._ddData = sec.dd || null;
+    target.style.transform = 'translateY(12px)';
+    target.style.opacity = '0';
+    requestAnimationFrame(function() {
+      target.style.transition = 'opacity .4s cubic-bezier(.16,1,.3,1), transform .4s cubic-bezier(.16,1,.3,1)';
+      target.style.opacity = '1';
+      target.style.transform = 'translateY(0)';
+    });
+  }, 150);
+}
 // ═══════════════════════════════════════════════
 // RENDER — NEW 4-PART FORMAT
 // ═══════════════════════════════════════════════
