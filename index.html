@@ -317,6 +317,37 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
   .nav-name{display:none;}
   .bcard-headline-zone,.bcard-insights-zone,.bcard-leadership-zone,.bcard-reflect-zone,.bcard-actions-zone,.ddc{padding-left:18px;padding-right:18px;}
 }
+
+/* EXECUTIVE SUMMARY PAGE */
+#pgExec{display:none;position:relative;z-index:1;}
+.exec-wrap{max-width:1000px;margin:0 auto;padding:36px 24px 100px;}
+.exec-hero{margin-bottom:36px;}
+.exec-title{font-family:'Fraunces',serif;font-size:clamp(26px,4vw,40px);font-weight:900;line-height:1.1;letter-spacing:-.02em;margin-bottom:8px;}
+.exec-title em{font-style:italic;color:var(--gold);}
+.exec-sub{font-size:14px;color:var(--txt2);line-height:1.7;max-width:560px;}
+.exec-meta{display:flex;align-items:center;gap:16px;margin-top:14px;flex-wrap:wrap;}
+.exec-meta-item{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;display:flex;align-items:center;gap:6px;}
+.exec-meta-dot{width:5px;height:5px;border-radius:50%;}
+.exec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:28px;}
+@media(max-width:640px){.exec-grid{grid-template-columns:1fr;}}
+.exec-card{background:rgba(10,10,10,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:18px;overflow:hidden;cursor:pointer;transition:all .3s cubic-bezier(.16,1,.3,1);}
+.exec-card:hover{border-color:rgba(255,255,255,0.3);transform:translateY(-3px);box-shadow:0 8px 40px rgba(255,255,255,0.04);}
+.exec-card-accent{height:2px;}
+.exec-card-body{padding:20px 22px;}
+.exec-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.exec-card-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.exec-card-icon{font-size:16px;}
+.exec-headline{font-size:14px;font-weight:600;color:var(--txt);line-height:1.5;letter-spacing:-.01em;margin-bottom:12px;}
+.exec-card-footer{display:flex;align-items:center;justify-content:space-between;}
+.exec-read-btn{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;transition:color .2s;}
+.exec-card:hover .exec-read-btn{color:var(--txt);}
+.exec-card-skel{display:flex;flex-direction:column;gap:8px;}
+.exec-refresh-row{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;margin-bottom:24px;flex-wrap:wrap;gap:10px;}
+.exec-refresh-txt{font-size:13px;color:var(--txt2);}
+.exec-refresh-txt b{color:#ffffff;}
+.exec-rbtn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.2);color:#ffffff;padding:8px 16px;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:all .2s;}
+.exec-rbtn:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.4);}
+.exec-rbtn:disabled{opacity:.4;cursor:not-allowed;}
 </style>
 </head>
 <body>
@@ -348,6 +379,7 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
     <div class="nav-r">
       <div class="nav-name">Hi, <b id="navN">—</b></div>
       <button class="nibtn home" onclick="showHome()">&#8962; Home</button>
+      <button class="nibtn" onclick="showExec()" style="border-color:rgba(212,168,67,0.4);color:var(--gold);">&#9889; Executive Summary</button>
       <button class="nibtn" onclick="showPath()" style="border-color:rgba(255,255,255,0.2);color:#cccccc;">&#128218; My Roadmap</button>
       <button class="nibtn" onclick="openMdl('readme')">&#9432; About</button>
       <button class="nibtn gold" onclick="openMdl('feedback')">&#9998; Feedback</button>
@@ -465,6 +497,32 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
         <div id="weeklyCards" style="display:flex;flex-direction:column;gap:14px;"></div>
         <div style="margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.08);text-align:center;"><button onclick="resetTrack()" style="background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 20px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#555;cursor:pointer;transition:all .2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#555'">Switch Learning Track</button></div>
       </div>
+    </div>
+  </div>
+
+  
+  <!-- EXECUTIVE SUMMARY PAGE -->
+  <div id="pgExec">
+    <div class="exec-wrap">
+      <button class="back-btn" onclick="showHome()">&#8592; Back to Home</button>
+      <div class="exec-hero">
+        <div class="tph-eyebrow" style="margin-bottom:10px;">Morning Intelligence · SMBC Indonesia</div>
+        <div class="exec-title">Your <em>Morning Edge</em><br>in 60 Seconds</div>
+        <div class="exec-sub">The top headline insight from every intelligence channel — one page, one glance, before your first meeting.</div>
+        <div class="exec-meta">
+          <div class="exec-meta-item"><div class="exec-meta-dot" style="background:var(--gold)"></div><span id="execDate">—</span></div>
+          <div class="exec-meta-item"><div class="exec-meta-dot" style="background:var(--green)"></div><span id="execStatus">Loading...</span></div>
+        </div>
+      </div>
+      <div class="exec-refresh-row">
+        <div class="exec-refresh-txt">Showing cached briefings where available. <b>Fetch all fresh</b> to get today's latest intelligence.</div>
+        <button class="exec-rbtn" id="execRBtn" onclick="execFetchAll()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Fetch All Fresh
+        </button>
+      </div>
+      <div class="exec-grid" id="execGrid"></div>
+      <div class="page-foot">FINANCE INTELLIGENCE PLATFORM &middot; EXECUTIVE SUMMARY &middot; <span id="execFootName"></span></div>
     </div>
   </div>
 
@@ -747,6 +805,7 @@ function showHome() {
   document.getElementById('pgHome').style.display = 'block';
   document.getElementById('pgTopic').style.display = 'none';
   document.getElementById('pgPath').style.display = 'none';
+  document.getElementById('pgExec').style.display = 'none';
   currentTopic = null; window.scrollTo(0,0);
 }
 
@@ -758,6 +817,7 @@ function openTopic(key) {
   var t = TOPICS[key];
   document.getElementById('pgHome').style.display = 'none';
   document.getElementById('pgPath').style.display = 'none';
+  document.getElementById('pgExec').style.display = 'none';
   document.getElementById('pgTopic').style.display = 'block';
   // Hero
   document.getElementById('tphEyebrow').textContent = t.tag + ' — Intelligence Briefing';
@@ -1258,6 +1318,128 @@ function submitFb() {
 }
 
 function toast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2800); }
+
+
+// ═══════════════════════════════════════════════
+// EXECUTIVE SUMMARY
+// ═══════════════════════════════════════════════
+function showExec() {
+  document.getElementById('pgHome').style.display = 'none';
+  document.getElementById('pgTopic').style.display = 'none';
+  document.getElementById('pgPath').style.display = 'none';
+  document.getElementById('pgExec').style.display = 'block';
+  currentTopic = null;
+  window.scrollTo(0,0);
+
+  var now = new Date();
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('execDate').textContent = days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+  document.getElementById('execFootName').textContent = profile.name ? profile.name.toUpperCase() : '';
+
+  renderExecGrid();
+}
+
+function renderExecGrid() {
+  var grid = document.getElementById('execGrid');
+  grid.innerHTML = '';
+  var topicKeys = Object.keys(TOPICS);
+  var cached = 0;
+
+  topicKeys.forEach(function(key) {
+    var t = TOPICS[key];
+    var card = document.createElement('div');
+    card.className = 'exec-card';
+    card.id = 'exec-card-' + key;
+    card.onclick = function() { openTopic(key); };
+
+    var cachedData = loadFromCache(key);
+
+    if (cachedData && cachedData.data && cachedData.data.s0 && cachedData.data.s0.hl) {
+      cached++;
+      // Show first section headline from cache
+      var sec = cachedData.data.s0;
+      card.innerHTML = buildExecCardHTML(t, sec.hl, true);
+    } else {
+      // Show skeleton — will load
+      card.innerHTML = buildExecCardSkel(t);
+      fetchExecHeadline(key, card, t);
+    }
+    grid.appendChild(card);
+  });
+
+  var live = topicKeys.length - cached;
+  document.getElementById('execStatus').textContent =
+    cached + ' cached · ' + (live > 0 ? live + ' fetching live' : 'all instant');
+}
+
+function buildExecCardHTML(t, headline, fromCache) {
+  var html = '<div class="exec-card-accent" style="background:' + t.rule + '"></div>';
+  html += '<div class="exec-card-body">';
+  html += '<div class="exec-card-top">';
+  html += '<div class="exec-card-tag"><span>' + t.icon + '</span>' + t.tag + '</div>';
+  if (fromCache) html += '<span style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(212,168,67,0.6);">cached</span>';
+  html += '</div>';
+  html += '<div class="exec-headline">' + headline + '</div>';
+  html += '<div class="exec-card-footer">';
+  html += '<div class="exec-card-tag" style="color:' + t.color + '">' + t.name + '</div>';
+  html += '<div class="exec-read-btn">Read full briefing →</div>';
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+function buildExecCardSkel(t) {
+  var html = '<div class="exec-card-accent" style="background:' + t.rule + '"></div>';
+  html += '<div class="exec-card-body">';
+  html += '<div class="exec-card-top"><div class="exec-card-tag"><span>' + t.icon + '</span>' + t.tag + '</div></div>';
+  html += '<div class="exec-card-skel"><div class="sk w80" style="height:13px"></div><div class="sk w60" style="height:13px"></div><div class="sk w70" style="height:13px"></div></div>';
+  html += '</div>';
+  return html;
+}
+
+function fetchExecHeadline(key, card, t) {
+  var p = t.prompts[0];
+  var sys = 'You are a senior financial intelligence analyst at SMBC Indonesia. Return ONLY valid JSON, no markdown. Be concise.';
+  var usr = 'Topic: ' + t.name + '\nInstruction: ' + p.q + '\n\nReturn ONLY: {"hl":"One powerful headline insight, specific, data-driven, max 15 words"}';
+
+  fetch('/api/claude-proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ system: sys, messages: [{ role: 'user', content: usr }], max_tokens: 200 })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.error || !data.text) return;
+    try {
+      var parsed = parseResponse(data.text);
+      if (parsed && parsed.hl) {
+        card.innerHTML = buildExecCardHTML(t, parsed.hl, false);
+        card.onclick = function() { openTopic(key); };
+        // Update status
+        var statusEl = document.getElementById('execStatus');
+        if (statusEl) {
+          var remaining = document.querySelectorAll('.exec-card-skel').length;
+          if (remaining === 0) statusEl.textContent = 'All topics loaded';
+        }
+      }
+    } catch(e) {}
+  })
+  .catch(function() {});
+}
+
+function execFetchAll() {
+  // Clear all briefing caches and re-render
+  Object.keys(TOPICS).forEach(function(key) {
+    clearTopicCache(key);
+  });
+  document.getElementById('execRBtn').disabled = true;
+  document.getElementById('execStatus').textContent = 'Fetching fresh intelligence...';
+  renderExecGrid();
+  setTimeout(function() {
+    document.getElementById('execRBtn').disabled = false;
+  }, 10000);
+}
 
 // ═══════════════════════════════════════════════
 // LEARNING PATH (unchanged from original)
