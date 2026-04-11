@@ -377,6 +377,34 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
 .t-aiworld .topic-arrow{background:rgba(124,58,237,0.15);color:#7c3aed;}
 .t-aiworld .topic-card:hover .topic-card-border{border-color:rgba(124,58,237,0.3);}
 .t-aiworld .topic-name{color:#ffffff;}
+
+/* REGULATORY INTELLIGENCE */
+.reg-table{width:100%;border-collapse:collapse;margin-top:4px;}
+.reg-table-header{display:grid;grid-template-columns:2fr 1fr 1fr 2fr 80px;gap:0;padding:8px 16px;background:rgba(240,201,106,0.06);border-bottom:1px solid rgba(240,201,106,0.15);}
+.reg-th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,201,106,0.5);}
+.reg-row{display:grid;grid-template-columns:2fr 1fr 1fr 2fr 80px;gap:0;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04);transition:background .2s;}
+.reg-row:hover{background:rgba(255,255,255,0.02);}
+.reg-row:last-child{border-bottom:none;}
+.reg-name{font-size:12px;font-weight:600;color:#ffffff;line-height:1.4;margin-bottom:3px;}
+.reg-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(240,201,106,0.6);}
+.reg-body{font-size:11px;color:rgba(255,255,255,0.3);}
+.reg-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);}
+.reg-action{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;}
+.reg-impact{display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.08em;padding:3px 8px;border-radius:4px;}
+.reg-high{background:rgba(255,107,107,0.15);color:#ff6b6b;border:1px solid rgba(255,107,107,0.2);}
+.reg-medium{background:rgba(212,168,67,0.15);color:#d4a843;border:1px solid rgba(212,168,67,0.2);}
+.reg-low{background:rgba(0,212,170,0.12);color:#00d4aa;border:1px solid rgba(0,212,170,0.15);}
+.reg-section-card{background:#0a0a0a;border:1px solid rgba(240,201,106,0.12);border-radius:16px;overflow:hidden;margin-bottom:20px;transition:border-color .3s;}
+.reg-section-card:hover{border-color:rgba(240,201,106,0.25);}
+.reg-section-head{padding:16px 20px;border-bottom:1px solid rgba(240,201,106,0.08);display:flex;align-items:center;justify-content:space-between;}
+.reg-section-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,201,106,0.7);}
+.reg-section-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.2);}
+.reg-accent{height:2px;background:linear-gradient(90deg,#f0c96a,#d4a843);}
+@media(max-width:700px){
+  .reg-table-header{grid-template-columns:1fr 60px;}
+  .reg-row{grid-template-columns:1fr 60px;grid-template-rows:auto auto auto;}
+  .reg-body,.reg-date,.reg-action{grid-column:1/-1;margin-top:4px;}
+}
 </style>
 </head>
 <body>
@@ -423,7 +451,7 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
         <div class="home-title"><span id="homeGreetWord">Good morning,</span><br><em id="homeN">—</em></div>
         <div class="home-sub">Your AI-powered daily briefing platform. Select an intelligence channel below — each delivers a fresh, data-driven brief in under 60 seconds.</div>
         <div class="home-meta">
-          <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--gold)"></div>9 Intelligence Channels</div>
+          <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--gold)"></div>10 Intelligence Channels</div>
           <div class="home-meta-item"><div class="home-meta-dot" style="background:#00d4aa"></div>Claude AI · Anthropic</div>
           <div class="home-meta-item"><div class="home-meta-dot" style="background:rgba(255,255,255,0.3)"></div><span id="homeClock">--:--</span> WIB</div>
         </div>
@@ -609,13 +637,37 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
             </div>
             <div class="topic-card-index">09</div>
           </div>
-          
           <div class="topic-name">AI World News</div>
           <div class="topic-data-row"><div class="topic-data-item"><div class="topic-data-val">OpenAI</div><div class="topic-data-lbl">Updates</div></div><div class="topic-data-item"><div class="topic-data-val">Anthropic</div><div class="topic-data-lbl">Research</div></div></div>
           <div class="topic-desc">Latest from OpenAI, Google, Anthropic and global AI leaders — with direct implications for Indonesian banking and finance.</div>
           <div class="topic-cta">
             <div class="topic-cta-txt"><div class="topic-live-dot"></div>AI Briefing</div>
             <div class="topic-arrow">→</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="t-reg" style="grid-column:span 2;"><div class="topic-card" onclick="openTopic('reg')" style="background:linear-gradient(135deg,rgba(240,201,106,0.06),rgba(212,168,67,0.03));">
+        <div class="topic-card-topbar" style="background:linear-gradient(90deg,#f0c96a,#d4a843);"></div>
+        <div class="topic-card-border" style="border-color:rgba(240,201,106,0.2);"></div>
+        <div class="topic-card-inner">
+          <div class="topic-card-head">
+            <div class="topic-card-left">
+              <div class="topic-tag" style="color:rgba(240,201,106,0.6);">Compliance · Featured</div>
+              <div class="topic-icon-wrap">⚖️</div>
+            </div>
+            <div class="topic-card-index" style="color:rgba(240,201,106,0.3);">10</div>
+          </div>
+          <div class="topic-name" style="font-size:26px;color:#f0c96a;">Regulatory Intelligence</div>
+          <div class="topic-data-row">
+            <div class="topic-data-item"><div class="topic-data-val" style="color:#f0c96a;">OJK</div><div class="topic-data-lbl">Active Rules</div></div>
+            <div class="topic-data-item"><div class="topic-data-val" style="color:#f0c96a;">BI</div><div class="topic-data-lbl">Directives</div></div>
+            <div class="topic-data-item"><div class="topic-data-val" style="color:#f0c96a;">Deadlines</div><div class="topic-data-lbl">Upcoming</div></div>
+            <div class="topic-data-item"><div class="topic-data-val" style="color:#f0c96a;">Risk Watch</div><div class="topic-data-lbl">Emerging</div></div>
+          </div>
+          <div class="topic-desc" style="color:rgba(240,201,106,0.55);">Structured regulatory briefing — OJK and Bank Indonesia updates organized by regulation name, effective date, compliance impact level, and required team action.</div>
+          <div class="topic-cta" style="border-top-color:rgba(240,201,106,0.1);">
+            <div class="topic-cta-txt" style="color:rgba(240,201,106,0.4);"><div class="topic-live-dot" style="background:#f0c96a;"></div>Structured Compliance Brief</div>
+            <div class="topic-arrow" style="background:rgba(240,201,106,0.12);color:#f0c96a;">→</div>
           </div>
         </div>
       </div></div>
@@ -744,7 +796,7 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
       <div class="mbody">
         <div class="msec"><div class="msec-lbl">What is this?</div><div class="msec-txt">The <b>Finance Intelligence Platform</b> is a free AI-powered daily briefing tool built exclusively for finance and banking professionals in Indonesia. Every morning it generates fresh, rich intelligence on your chosen topic — tailored to your interests. Think of it as your personal Bloomberg Terminal meets a leadership coach, available in under 2 minutes every day.</div></div>
         <div class="mdivider"></div>
-        <div class="msec"><div class="msec-lbl">9 Topic Channels</div>
+        <div class="msec"><div class="msec-lbl">10 Topic Channels</div>
           <div class="mgrid">
             <div class="mfeat"><div class="mf-i">🤖</div><div class="mf-t">AI for Leaders</div><div class="mf-d">How AI is reshaping banking, fintech, and leadership with Indonesia context.</div></div>
             <div class="mfeat"><div class="mf-i">🏦</div><div class="mf-t">Banking &amp; Finance</div><div class="mf-d">Global and Indonesian banking, OJK regulation, and financial markets.</div></div>
@@ -755,6 +807,7 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
             <div class="mfeat"><div class="mf-i">🚀</div><div class="mf-t">Self-Development</div><div class="mf-d">Habits, productivity systems, and career growth for finance professionals.</div></div>
             <div class="mfeat"><div class="mf-i">🏢</div><div class="mf-t">SMBC Group Updates</div><div class="mf-d">SMBC Indonesia, SMFG, OTO Finance and group-wide strategy, performance and regulatory developments.</div></div>
             <div class="mfeat"><div class="mf-i">🌍</div><div class="mf-t">AI World News</div><div class="mf-d">Latest from OpenAI, Google, Anthropic and global AI leaders with Indonesian banking implications.</div></div>
+            <div class="mfeat"><div class="mf-i">⚖️</div><div class="mf-t">Regulatory Intelligence</div><div class="mf-d">OJK and BI regulations structured by name, effective date, compliance impact level and required team action.</div></div>
           </div>
         </div>
         <div class="mdivider"></div>
@@ -959,6 +1012,19 @@ var TOPICS = {
       {lbl:'AI Models, Tools & Breakthroughs',q:'Write a sharp intelligence briefing on the latest AI model releases and tool developments relevant to finance professionals. Cover: new model releases from major labs and their capabilities relevant to finance work, AI agent developments and autonomous workflow implications, AI coding and analysis tools gaining enterprise adoption, cost and performance trajectory of frontier AI, and which tools a finance team should be evaluating right now.'},
       {lbl:'AI Policy, Regulation & Geopolitics',q:'Write a sharp intelligence briefing on global AI policy and geopolitical developments. Cover: US AI executive orders and regulatory developments, EU AI Act implementation progress and financial services implications, China AI development and US-China AI competition, G7 and international AI governance frameworks, and how the global AI regulatory landscape will shape what Indonesian banks can and cannot do with AI in the next 24 months.'}
     ]
+,
+  reg: {
+    key:'reg',icon:'⚖️',name:'Regulatory Intelligence',tag:'COMPLIANCE',color:'#f0c96a',
+    sub:'OJK and Bank Indonesia regulatory updates — structured by regulation, effective date, compliance impact and required action for your team.',
+    rule:'linear-gradient(90deg,#f0c96a,#d4a843)',
+    reflect:['Which regulation on this list is your team least prepared for — and what needs to happen this week?','Is your regulatory tracking process proactive or reactive — and which one does your leader expect?','What would it mean for your team if you missed a compliance deadline on any item listed here?'],
+    prompts:[
+      {lbl:'OJK Active Regulations',q:'List the 4 most important currently active or recently effective OJK regulations affecting Indonesian banking operations in 2025-2026. For each regulation provide: the exact regulation name and number, the issuing body (OJK), effective date, a 2-sentence plain-language explanation of what it requires, the compliance impact level (High/Medium/Low) for a mid-size foreign bank like SMBC Indonesia, and one specific action the finance or compliance team must take. Focus on POJK regulations related to digital banking, capital adequacy, consumer protection, and risk management.'},
+      {lbl:'Bank Indonesia Directives',q:'List the 4 most important recent Bank Indonesia regulations, circulars or directives affecting banking operations in Indonesia in 2025-2026. For each provide: the exact regulation name and number, issuing body (Bank Indonesia), effective date, a 2-sentence explanation of what it requires, compliance impact level (High/Medium/Low) for SMBC Indonesia, and one specific action required. Focus on monetary policy implementation, QRIS regulations, foreign exchange rules, and macroprudential policies.'},
+      {lbl:'Upcoming Compliance Deadlines',q:'Identify 4 upcoming regulatory compliance deadlines or implementation dates that Indonesian banks must prepare for in the next 6-12 months. For each provide: regulation name and number, issuing body, deadline date, what must be completed by that date, readiness complexity level (High/Medium/Low), and the consequence of non-compliance. Include both OJK and Bank Indonesia requirements relevant to foreign banks operating in Indonesia.'},
+      {lbl:'Regulatory Risk Watch',q:'Identify 4 regulatory developments currently under consultation, draft phase, or early implementation that Indonesian banking professionals should monitor closely. For each provide: the regulation name or draft title, issuing body, current status (Draft/Consultation/Pilot), expected effective date, what it will likely require, risk level (High/Medium/Low) if unprepared, and one recommended preparatory action. Focus on emerging areas: AI governance, ESG disclosure, open banking, and cross-border payment regulations.'}
+    ]
+  }
   }
 };
 
@@ -1130,10 +1196,44 @@ function renderOtherTopics(activeKey) {
   });
 }
 
+
+// ═══════════════════════════════════════════════
+// REGULATORY INTELLIGENCE — SPECIAL SECTION CALL
+// ═══════════════════════════════════════════════
+function callRegSection(sectionLabel, instruction) {
+  var sys = 'You are a regulatory compliance expert for Indonesian banking. Return ONLY valid JSON, no markdown, no backticks. All strings on single lines.';
+  var usr = 'Section: ' + sectionLabel + '\n\n' + instruction + '\n\n'
+    + 'Return ONLY this JSON with 4 real regulatory items:\n'
+    + '{"items":[{"name":"Exact regulation name","num":"POJK/SE/PBI number","body":"OJK or Bank Indonesia","date":"DD MMM YYYY","summary":"What it requires in 1-2 sentences","impact":"High or Medium or Low","action":"One specific action the finance team must take"}]}\n'
+    + 'Fill with real, accurate Indonesian banking regulations. 4 items only.';
+
+  return fetch('/api/claude-proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system: sys,
+      messages: [{ role: 'user', content: usr }],
+      max_tokens: 1200
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.error) throw new Error(data.error);
+    var raw = data.text || '';
+    if (!raw) throw new Error('Empty response from AI.');
+    var parsed = parseResponse(raw);
+    return { reg: true, items: parsed.items || [] };
+  });
+}
+
 // ═══════════════════════════════════════════════
 // CLAUDE API CALL — NEW 4-PART FORMAT
 // ═══════════════════════════════════════════════
 function callSection(topicName, sectionLabel, instruction) {
+  // Special regulatory format
+  if (topicName === 'Regulatory Intelligence') {
+    return callRegSection(sectionLabel, instruction);
+  }
   var sys = 'You are a senior financial intelligence analyst at SMBC Indonesia. Return ONLY valid JSON, no markdown, no backticks. Be concise — maximum 40 words per bullet, 60 words for ins and dd fields. All strings on single lines.';
 
   var usr = 'Topic: ' + topicName + '\nSection: ' + sectionLabel + '\n\n' + instruction + '\n\n'
@@ -1251,7 +1351,11 @@ function loadTopic() {
       .then(function(r) {
         if (hasError) return;
         merged['s'+idx] = Object.assign({ lbl: p.lbl }, r);
-        renderSingleCard(key, idx, r, p);
+        if (r.reg) {
+          renderRegCard(key, idx, r, p);
+        } else {
+          renderSingleCard(key, idx, r, p);
+        }
         completed++;
         if (completed === total) onAllDone();
       })
@@ -1318,6 +1422,66 @@ function renderSelfAssessment(insText, color) {
   return html;
 }
 
+
+
+// ═══════════════════════════════════════════════
+// REGULATORY INTELLIGENCE RENDERER
+// ═══════════════════════════════════════════════
+function renderRegCard(key, idx, sec, p) {
+  var g = document.getElementById('contentStack');
+  var skels = g.querySelectorAll('.bcard');
+  var target = skels[idx];
+  if (!target) return;
+
+  target.style.transition = 'opacity .2s ease';
+  target.style.opacity = '0';
+
+  setTimeout(function() {
+    var items = sec.items || [];
+    var impactClass = function(imp) {
+      if (!imp) return 'reg-medium';
+      var i = imp.toLowerCase();
+      if (i === 'high') return 'reg-high';
+      if (i === 'low') return 'reg-low';
+      return 'reg-medium';
+    };
+
+    var rows = items.map(function(item) {
+      return '<div class="reg-row">'
+        + '<div><div class="reg-name">' + (item.name || '—') + '</div>'
+        + '<div class="reg-num">' + (item.num || '') + ' · ' + (item.body || '') + '</div></div>'
+        + '<div class="reg-date">' + (item.date || '—') + '</div>'
+        + '<div class="reg-body">' + (item.summary || '—') + '</div>'
+        + '<div class="reg-action">' + (item.action || '—') + '</div>'
+        + '<div><span class="reg-impact ' + impactClass(item.impact) + '">' + (item.impact || 'Med') + '</span></div>'
+        + '</div>';
+    }).join('');
+
+    var html = '<div class="reg-accent"></div>';
+    html += '<div class="reg-section-head">';
+    html += '<div class="reg-section-title">' + p.lbl + '</div>';
+    html += '<div class="reg-section-count">' + items.length + ' regulations</div>';
+    html += '</div>';
+    html += '<div class="reg-table-header">';
+    html += '<div class="reg-th">Regulation</div>';
+    html += '<div class="reg-th">Effective</div>';
+    html += '<div class="reg-th">Summary</div>';
+    html += '<div class="reg-th">Required Action</div>';
+    html += '<div class="reg-th">Impact</div>';
+    html += '</div>';
+    html += rows;
+
+    target.className = 'reg-section-card';
+    target.innerHTML = html;
+    target.style.transform = 'translateY(12px)';
+    target.style.opacity = '0';
+    requestAnimationFrame(function() {
+      target.style.transition = 'opacity .4s cubic-bezier(.16,1,.3,1), transform .4s cubic-bezier(.16,1,.3,1)';
+      target.style.opacity = '1';
+      target.style.transform = 'translateY(0)';
+    });
+  }, 150);
+}
 
 // ═══════════════════════════════════════════════
 // PROGRESSIVE RENDER — replaces individual skeleton card
@@ -1387,6 +1551,14 @@ function renderContent(key, data) {
   var t = TOPICS[key];
   t.prompts.forEach(function(p, i) {
     var sec = data['s'+i] || {};
+    // Handle regulatory cached render
+    if (sec.reg && sec.items) {
+      var regD = document.createElement('div');
+      regD.className = 'bcard';
+      g.appendChild(regD);
+      renderRegCard(key, i, sec, p);
+      return;
+    }
     var svKey = key + '_' + i;
     var isSv = savedItems[svKey];
     var d = document.createElement('div');
