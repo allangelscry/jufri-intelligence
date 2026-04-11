@@ -348,6 +348,17 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
 .exec-rbtn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.2);color:#ffffff;padding:8px 16px;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:all .2s;}
 .exec-rbtn:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.4);}
 .exec-rbtn:disabled{opacity:.4;cursor:not-allowed;}
+
+.t-smbc .topic-card-bg{background:linear-gradient(135deg,#00b4d8,#0077b6);}
+.t-smbc .topic-icon-wrap{background:rgba(0,180,216,0.15);}
+.t-smbc .topic-arrow{background:rgba(0,180,216,0.15);color:#00b4d8;}
+.t-smbc .topic-card:hover .topic-card-border{border-color:rgba(0,180,216,0.3);}
+.t-smbc .topic-name{color:#ffffff;}
+.t-aiworld .topic-card-bg{background:linear-gradient(135deg,#7c3aed,#2563eb);}
+.t-aiworld .topic-icon-wrap{background:rgba(124,58,237,0.15);}
+.t-aiworld .topic-arrow{background:rgba(124,58,237,0.15);color:#7c3aed;}
+.t-aiworld .topic-card:hover .topic-card-border{border-color:rgba(124,58,237,0.3);}
+.t-aiworld .topic-name{color:#ffffff;}
 </style>
 </head>
 <body>
@@ -394,7 +405,7 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
         <div class="home-title"><span id="homeGreetWord">Good morning,</span><br><em id="homeN">—</em></div>
         <div class="home-sub">Choose a topic below to load your personalized intelligence briefing. Each section is focused, deep, and tailored for Indonesian finance professionals.</div>
         <div class="home-meta">
-          <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--green)"></div>7 Topics Available</div>
+          <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--green)"></div>9 Topics Available</div>
           <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--gold)"></div>Claude AI · Anthropic</div>
           <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--blue)"></div><span id="homeClock">--:--</span></div>
         </div>
@@ -408,6 +419,8 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
       <div class="t-geo"><div class="topic-card" onclick="openTopic('geo')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🌐</div><div class="topic-tag">GLOBAL</div></div><div class="topic-name">Geopolitics</div><div class="topic-desc">Global power shifts, US-China tensions, ASEAN developments, trade wars, sanctions, and geopolitical risks that directly impact Indonesian banking and investment.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
       <div class="t-idn"><div class="topic-card" onclick="openTopic('idn')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🇮🇩</div><div class="topic-tag">INDONESIA</div></div><div class="topic-name">Indonesia Updates</div><div class="topic-desc">Latest Indonesian government policy, cabinet decisions, OJK regulatory changes, major business developments, and domestic opportunities for finance professionals.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
       <div class="t-sdf"><div class="topic-card" onclick="openTopic('sdf')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🚀</div><div class="topic-tag">PERSONAL</div></div><div class="topic-name">Self-Development</div><div class="topic-desc">Habits, mindset, productivity systems, learning strategies, and career growth tactics specifically for ambitious finance and banking professionals.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
+      <div class="t-smbc"><div class="topic-card" onclick="openTopic('smbc')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🏢</div><div class="topic-tag">SMBC GROUP</div></div><div class="topic-name">SMBC Group Updates</div><div class="topic-desc">Latest developments across SMBC Indonesia, SMBC Group, SMFG, OTO Finance, Summit OTO Finance — strategy, performance, and regulatory moves.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
+      <div class="t-aiworld"><div class="topic-card" onclick="openTopic('aiworld')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🌍</div><div class="topic-tag">AI GLOBAL</div></div><div class="topic-name">AI World News</div><div class="topic-desc">Latest from OpenAI, Google, Anthropic, Meta and global AI leaders — with direct implications for Indonesian banking and financial services.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
     </div>
   </div>
 
@@ -533,7 +546,7 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
       <div class="mbody">
         <div class="msec"><div class="msec-lbl">What is this?</div><div class="msec-txt">The <b>Finance Intelligence Platform</b> is a free AI-powered daily briefing tool built exclusively for finance and banking professionals in Indonesia. Every morning it generates fresh, rich intelligence on your chosen topic — tailored to your interests. Think of it as your personal Bloomberg Terminal meets a leadership coach, available in under 2 minutes every day.</div></div>
         <div class="mdivider"></div>
-        <div class="msec"><div class="msec-lbl">7 Topic Channels</div>
+        <div class="msec"><div class="msec-lbl">9 Topic Channels</div>
           <div class="mgrid">
             <div class="mfeat"><div class="mf-i">🤖</div><div class="mf-t">AI for Leaders</div><div class="mf-d">How AI is reshaping banking, fintech, and leadership with Indonesia context.</div></div>
             <div class="mfeat"><div class="mf-i">🏦</div><div class="mf-t">Banking &amp; Finance</div><div class="mf-d">Global and Indonesian banking, OJK regulation, and financial markets.</div></div>
@@ -542,6 +555,8 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
             <div class="mfeat"><div class="mf-i">🌐</div><div class="mf-t">Geopolitics</div><div class="mf-d">Global power shifts, trade risks, and geopolitical impacts on Indonesia.</div></div>
             <div class="mfeat"><div class="mf-i">🇮🇩</div><div class="mf-t">Indonesia Updates</div><div class="mf-d">Government policy, OJK regulation, business developments, and local opportunities.</div></div>
             <div class="mfeat"><div class="mf-i">🚀</div><div class="mf-t">Self-Development</div><div class="mf-d">Habits, productivity systems, and career growth for finance professionals.</div></div>
+            <div class="mfeat"><div class="mf-i">🏢</div><div class="mf-t">SMBC Group Updates</div><div class="mf-d">SMBC Indonesia, SMFG, OTO Finance and group-wide strategy, performance and regulatory developments.</div></div>
+            <div class="mfeat"><div class="mf-i">🌍</div><div class="mf-t">AI World News</div><div class="mf-d">Latest from OpenAI, Google, Anthropic and global AI leaders with Indonesian banking implications.</div></div>
           </div>
         </div>
         <div class="mdivider"></div>
@@ -722,6 +737,31 @@ var TOPICS = {
       {lbl:'Continuous Learning & Skill Building',q:'Write a sharp intelligence briefing on continuous learning for Indonesian banking professionals. Cover: the top 5 skills commanding salary premiums in Indonesian banking in 2026, spaced repetition research vs cramming with retention data and 30-minute-a-day application, the best platforms and resources for finance learning with time investment vs career ROI, how to use Claude or ChatGPT as a personal finance tutor with specific prompt approaches, and a concrete 90-day learning plan structure for a finance team leader.'},
       {lbl:'Mental Resilience & Stress Management',q:'Write a sharp intelligence briefing on mental resilience for banking professionals backed by research. Cover: burnout prevalence data in financial services, cortisol and allostatic load research on chronic banking stress and cognitive impact, resilience practices used by named banking executives with 20+ year careers, neuroscience of stress recovery (what actually works vs what feels like it works), and the specific stress signatures of Indonesian banking work culture and evidence-based antidotes.'}
     ]
+,
+  smbc: {
+    key:'smbc',icon:'🏢',name:'SMBC Group Updates',tag:'SMBC GROUP',color:'#00b4d8',
+    sub:'Latest developments across SMBC Indonesia, SMBC Group, SMFG, OTO Finance, Summit OTO Finance — strategy, performance, regulatory and digital moves.',
+    rule:'linear-gradient(90deg,#00b4d8,#0077b6)',
+    reflect:['What does this SMBC Group development mean for your specific role and team at SMBC Indonesia?','How does SMBC Group strategy translate into priorities you should be acting on this month?','What competitive move by SMBC or its peers changes how you should think about your work this quarter?'],
+    prompts:[
+      {lbl:'SMBC Indonesia Performance & Strategy',q:'Write a sharp intelligence briefing on SMBC Indonesia (formerly BTPN) latest performance and strategic direction. Cover: recent financial performance indicators (NIM, credit growth, NPL), strategic priorities under SMBC ownership, pension lending franchise status and Himbara competition threat, digital banking initiatives and Jenius platform performance, and workforce and organizational developments relevant to finance team leaders.'},
+      {lbl:'SMBC Group & SMFG Global Moves',q:'Write a sharp intelligence briefing on SMBC Group and SMFG latest global developments relevant to Indonesian operations. Cover: SMFG quarterly performance and strategic announcements, SMBC Group Asia-Pacific expansion moves, group-wide digital transformation and AI initiatives, capital allocation decisions affecting emerging market operations, and what group strategy signals for SMBC Indonesia priorities.'},
+      {lbl:'OTO Finance & Summit OTO Finance Updates',q:'Write a sharp intelligence briefing on OTO Finance and Summit OTO Finance latest developments. Cover: motorcycle and vehicle financing market performance, OJK regulatory compliance status, competition from BFI Finance and Adira, digital lending and collection technology adoption, NPL trends in consumer vehicle financing, and strategic direction under SMBC Group ownership.'},
+      {lbl:'SMBC Group Regulatory & Compliance Landscape',q:'Write a sharp intelligence briefing on regulatory and compliance developments affecting SMBC Indonesia and SMBC Group operations. Cover: OJK requirements specific to foreign-owned banks, Bank Indonesia regulations impacting SMBC Indonesia operations, SMBC Group compliance framework updates, cross-border regulatory coordination between OJK and Japanese FSA, and what upcoming regulatory changes demand immediate team attention.'}
+    ]
+  },
+  aiworld: {
+    key:'aiworld',icon:'🌍',name:'AI World News',tag:'AI GLOBAL',color:'#7c3aed',
+    sub:'Latest developments from OpenAI, Google, Anthropic, Meta, and global AI leaders — with direct implications for Indonesian banking and financial services.',
+    rule:'linear-gradient(90deg,#7c3aed,#2563eb)',
+    reflect:['Which global AI development this week could realistically reach your banking operations within 12 months?','Are you following AI developments closely enough to spot the ones that will affect your team before your organization does?','What would you tell your leader this week about where global AI is heading and what it means for SMBC Indonesia?'],
+    prompts:[
+      {lbl:'OpenAI, Google & Anthropic Latest',q:'Write a sharp intelligence briefing on the latest developments from OpenAI, Google DeepMind, and Anthropic. Cover: most significant product launches or research breakthroughs in the past month, competitive dynamics between the three labs, enterprise adoption developments in financial services, safety and governance announcements, and what each development means specifically for banking professionals in Indonesia.'},
+      {lbl:'AI in Global Financial Services',q:'Write a sharp intelligence briefing on how global banks and fintechs are deploying AI right now. Cover: specific named institutions (JPMorgan, Goldman Sachs, DBS, UOB) and what they are doing with AI in production, measurable outcomes achieved, which AI applications are moving fastest in banking, regulatory responses from Fed, MAS, and ECB, and what Indonesian banks are 12-24 months away from implementing.'},
+      {lbl:'AI Models, Tools & Breakthroughs',q:'Write a sharp intelligence briefing on the latest AI model releases and tool developments relevant to finance professionals. Cover: new model releases from major labs and their capabilities relevant to finance work, AI agent developments and autonomous workflow implications, AI coding and analysis tools gaining enterprise adoption, cost and performance trajectory of frontier AI, and which tools a finance team should be evaluating right now.'},
+      {lbl:'AI Policy, Regulation & Geopolitics',q:'Write a sharp intelligence briefing on global AI policy and geopolitical developments. Cover: US AI executive orders and regulatory developments, EU AI Act implementation progress and financial services implications, China AI development and US-China AI competition, G7 and international AI governance frameworks, and how the global AI regulatory landscape will shape what Indonesian banks can and cannot do with AI in the next 24 months.'}
+    ]
+  }
   }
 };
 
