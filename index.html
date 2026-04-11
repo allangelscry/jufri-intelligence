@@ -59,10 +59,10 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
 .hint-txt{font-size:11px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5;}
 
 /* NAV */
-.nav{background:rgba(0,0,0,0.96);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:50;backdrop-filter:blur(20px);}
-.nav-brand{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:#ffffff;display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity .2s;text-decoration:none;}
-.nav-brand:hover{opacity:.8;}
-.nav-dot{width:7px;height:7px;border-radius:50%;background:#ffffff;box-shadow:0 0 8px rgba(255,255,255,0.4);animation:pulse 2.5s ease-in-out infinite;}
+.nav{background:rgba(0,0,0,0.98);border-bottom:1px solid rgba(255,255,255,0.06);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:50;backdrop-filter:blur(24px);}
+.nav-brand{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:#ffffff;display:flex;align-items:center;gap:10px;cursor:pointer;transition:opacity .2s;text-decoration:none;letter-spacing:-.01em;}
+.nav-brand:hover{opacity:.75;}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(212,168,67,0.5);animation:pulse 2.5s ease-in-out infinite;}
 @keyframes pulse{0%,100%{box-shadow:0 0 8px rgba(255,255,255,0.3);}50%{box-shadow:0 0 20px rgba(255,255,255,0.5);}}
 .nav-r{display:flex;align-items:center;gap:8px;}
 .nav-name{font-size:12px;color:var(--muted);}
@@ -87,42 +87,60 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
 .home-greeting{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:10px;}
 .home-greeting::before,.home-greeting::after{content:'';flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3));}
 .home-greeting::after{background:linear-gradient(90deg,var(--gold),transparent);}
-.home-title{font-family:'Fraunces',serif;font-size:clamp(34px,5vw,58px);font-weight:900;line-height:1.1;letter-spacing:-.03em;margin-bottom:14px;text-shadow:0 2px 40px rgba(255,255,255,0.08);}
+.home-title{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,56px);font-weight:900;line-height:1.08;letter-spacing:-.04em;margin-bottom:12px;}
 .home-title em{font-style:italic;color:var(--gold);}
-.home-sub{font-size:15px;color:var(--txt2);max-width:500px;margin:0 auto 32px;line-height:1.8;letter-spacing:0.01em;}
-.home-meta{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;}
-.home-meta-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt2);font-family:'JetBrains Mono',monospace;letter-spacing:.06em;}
-.home-meta-dot{width:5px;height:5px;border-radius:50%;}
+.home-sub{font-size:14px;color:rgba(255,255,255,0.45);max-width:480px;margin:0 auto 28px;line-height:1.75;letter-spacing:0.01em;}
+.home-meta{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;}
+.home-meta-item{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,0.35);font-family:'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;}
+.home-meta-dot{width:4px;height:4px;border-radius:50%;}
 
 /* TOPIC GRID */
-.topic-grid{max-width:1120px;margin:0 auto;padding:0 24px 80px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.topic-grid{max-width:1120px;margin:0 auto;padding:0 24px 80px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
 @media(max-width:900px){.topic-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:560px){.topic-grid{grid-template-columns:1fr;}}
-.topic-card{border-radius:20px;overflow:hidden;cursor:pointer;transition:all .35s cubic-bezier(.16,1,.3,1);position:relative;min-height:220px;display:flex;flex-direction:column;}
-.topic-card:hover{transform:translateY(-6px);}
-.topic-card-bg{position:absolute;inset:0;opacity:0.18;transition:opacity .35s;}
-.topic-card:hover .topic-card-bg{opacity:0.28;}
-.topic-card-border{position:absolute;inset:0;border-radius:20px;border:1px solid rgba(255,255,255,0.1);transition:border-color .35s;}
-.topic-card:hover .topic-card-border{border-color:rgba(255,255,255,0.35);}
-.topic-card-inner{position:relative;z-index:1;padding:28px 26px;flex:1;display:flex;flex-direction:column;background:rgba(0,0,0,0.75);}
-.topic-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
-.topic-icon-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:1px solid rgba(255,255,255,0.1);}
-.topic-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);color:var(--muted);}
-.topic-name{font-family:'Fraunces',serif;font-size:22px;font-weight:700;line-height:1.2;letter-spacing:-.01em;margin-bottom:8px;}
-.topic-desc{font-size:13px;color:var(--txt2);line-height:1.65;flex:1;}
-.topic-cta{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);}
-.topic-cta-txt{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;}
-.topic-arrow{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:16px;}
+/* Featured card spans 2 columns */
+.t-fin{grid-column:span 2;}
+@media(max-width:900px){.t-fin{grid-column:span 1;}}
+.topic-card{border-radius:16px;overflow:hidden;cursor:pointer;transition:all .3s cubic-bezier(.16,1,.3,1);position:relative;display:flex;flex-direction:column;background:#0a0a0a;}
+.topic-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,0.6);}
+.topic-card-topbar{height:3px;width:100%;flex-shrink:0;}
+.topic-card-border{position:absolute;inset:0;border-radius:16px;border:1px solid rgba(255,255,255,0.08);transition:border-color .3s;pointer-events:none;z-index:2;}
+.topic-card:hover .topic-card-border{border-color:rgba(255,255,255,0.22);}
+.topic-card-inner{position:relative;z-index:1;padding:20px 20px 16px;flex:1;display:flex;flex-direction:column;}
+.topic-card-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.topic-card-left{display:flex;flex-direction:column;gap:8px;}
+.topic-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,0.25);}
+.topic-icon-wrap{font-size:22px;line-height:1;}
+.topic-card-index{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.12);letter-spacing:.05em;}
+.topic-name{font-family:'Fraunces',serif;font-size:20px;font-weight:700;line-height:1.15;letter-spacing:-.02em;margin-bottom:6px;}
+.t-fin .topic-card .topic-name{font-size:26px;}
+.topic-data-row{display:flex;gap:14px;margin-bottom:10px;}
+.topic-data-item{display:flex;flex-direction:column;gap:2px;}
+.topic-data-val{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;}
+.topic-data-lbl{font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:.1em;text-transform:uppercase;}
+.topic-desc{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;flex:1;}
+.t-fin .topic-card .topic-desc{color:rgba(255,255,255,0.55);font-size:13px;}
+.topic-cta{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);}
+.topic-cta-txt{font-size:9px;color:rgba(255,255,255,0.25);font-family:'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:5px;}
+.topic-live-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:pulse 2.5s ease-in-out infinite;flex-shrink:0;}
+.topic-arrow{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;transition:all .25s;font-size:13px;}
 .topic-card:hover .topic-arrow{transform:translateX(3px);}
+/* SMBC special treatment */
+.t-smbc .topic-card{border-color:rgba(0,180,216,0.15);background:rgba(0,180,216,0.03);}
+.t-smbc .topic-card .topic-tag{color:rgba(0,180,216,0.5);}
+.t-smbc-badge{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:rgba(0,180,216,0.5);background:rgba(0,180,216,0.08);border:1px solid rgba(0,180,216,0.15);padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:6px;}
 
 /* Per-topic colors */
-.t-ai .topic-card-bg{background:linear-gradient(135deg,rgba(255,255,255,0.14),rgba(255,255,255,0.06));}.t-ai .topic-icon-wrap{background:rgba(255,255,255,0.08);}.t-ai .topic-arrow{background:rgba(255,255,255,0.1);color:#ffffff;}.t-ai .topic-name{color:#ffffff;}
-.t-fin .topic-card-bg{background:linear-gradient(135deg,#d4a843,#ff8c42);}.t-fin .topic-icon-wrap{background:rgba(212,168,67,0.15);}.t-fin .topic-arrow{background:rgba(212,168,67,0.15);color:var(--gold);}.t-fin .topic-name{color:#ffffff;}
-.t-eco .topic-card-bg{background:linear-gradient(135deg,#00d4aa,#00e5a0);}.t-eco .topic-icon-wrap{background:rgba(0,212,170,0.15);}.t-eco .topic-arrow{background:rgba(0,212,170,0.15);color:var(--teal);}.t-eco .topic-name{color:#ffffff;}
-.t-led .topic-card-bg{background:linear-gradient(135deg,#00e5a0,#4f9eff);}.t-led .topic-icon-wrap{background:rgba(0,229,160,0.15);}.t-led .topic-arrow{background:rgba(0,229,160,0.15);color:var(--green);}.t-led .topic-name{color:#ffffff;}
-.t-sdf .topic-card-bg{background:linear-gradient(135deg,rgba(255,255,255,0.1),rgba(212,168,67,0.1));}.t-sdf .topic-icon-wrap{background:rgba(255,255,255,0.08);}.t-sdf .topic-arrow{background:rgba(255,255,255,0.1);color:#ffffff;}.t-sdf .topic-name{color:#ffffff;}
-.t-geo .topic-card-bg{background:linear-gradient(135deg,#ff6b6b,#ff8c42);}.t-geo .topic-icon-wrap{background:rgba(255,107,107,0.15);}.t-geo .topic-arrow{background:rgba(255,107,107,0.15);color:#ff6b6b;}.t-geo .topic-name{color:#ffffff;}
-.t-idn .topic-card-bg{background:linear-gradient(135deg,#e63946,#c1121f);}.t-idn .topic-icon-wrap{background:rgba(230,57,70,0.15);}.t-idn .topic-arrow{background:rgba(230,57,70,0.15);color:#ff7b85;}.t-idn .topic-name{color:#ffffff;}
+/* Per-topic accent colors — topbar + arrow + data values */
+.t-ai  .topic-card-topbar{background:linear-gradient(90deg,#ffffff,rgba(255,255,255,0.3));}.t-ai  .topic-arrow{background:rgba(255,255,255,0.08);color:#ffffff;}.t-ai  .topic-data-val{color:rgba(255,255,255,0.7);}
+.t-fin .topic-card-topbar{background:linear-gradient(90deg,#d4a843,#ff8c42);}.t-fin .topic-arrow{background:rgba(212,168,67,0.15);color:#d4a843;}.t-fin .topic-data-val{color:#d4a843;}
+.t-eco .topic-card-topbar{background:linear-gradient(90deg,#00d4aa,#00e5a0);}.t-eco .topic-arrow{background:rgba(0,212,170,0.12);color:#00d4aa;}.t-eco .topic-data-val{color:#00d4aa;}
+.t-led .topic-card-topbar{background:linear-gradient(90deg,#00e5a0,#4f9eff);}.t-led .topic-arrow{background:rgba(0,229,160,0.12);color:#00e5a0;}.t-led .topic-data-val{color:#00e5a0;}
+.t-sdf .topic-card-topbar{background:linear-gradient(90deg,#8b6dff,#ff5f7e);}.t-sdf .topic-arrow{background:rgba(139,109,255,0.12);color:#8b6dff;}.t-sdf .topic-data-val{color:#8b6dff;}
+.t-geo .topic-card-topbar{background:linear-gradient(90deg,#ff6b6b,#ff8c42);}.t-geo .topic-arrow{background:rgba(255,107,107,0.12);color:#ff6b6b;}.t-geo .topic-data-val{color:#ff6b6b;}
+.t-idn .topic-card-topbar{background:linear-gradient(90deg,#e63946,#c1121f);}.t-idn .topic-arrow{background:rgba(230,57,70,0.12);color:#ff7b85;}.t-idn .topic-data-val{color:#ff7b85;}
+.t-smbc .topic-card-topbar{background:linear-gradient(90deg,#00b4d8,#0077b6);}.t-smbc .topic-arrow{background:rgba(0,180,216,0.12);color:#00b4d8;}.t-smbc .topic-data-val{color:#00b4d8;}
+.t-aiworld .topic-card-topbar{background:linear-gradient(90deg,#7c3aed,#2563eb);}.t-aiworld .topic-arrow{background:rgba(124,58,237,0.12);color:#7c3aed;}.t-aiworld .topic-data-val{color:#7c3aed;}
 
 /* TOPIC PAGE */
 #pgTopic{display:none;position:relative;z-index:1;}
@@ -172,22 +190,22 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
 
 /* ─── NEW: BRIEFING CARD STRUCTURE ─────────────────────────── */
 .content-stack{display:flex;flex-direction:column;gap:24px;}
-.bcard{background:rgba(10,10,10,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:20px;overflow:hidden;transition:border-color .3s,transform .3s;backdrop-filter:blur(12px);}
-.bcard:hover{border-color:rgba(255,255,255,0.22);transform:translateY(-2px);}
+.bcard{background:#0a0a0a;border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;transition:border-color .3s,transform .3s,box-shadow .3s;}
+.bcard:hover{border-color:rgba(255,255,255,0.18);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.5);}
 .bcard-accent{height:2px;}
 
 /* HEADLINE ZONE */
-.bcard-headline-zone{padding:24px 28px 20px;border-bottom:1px solid rgba(255,255,255,0.06);}
-.bcard-section-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;opacity:.75;}
-.bcard-headline{font-family:'Fraunces',serif;font-size:clamp(17px,2.5vw,22px);font-weight:700;line-height:1.35;letter-spacing:-.02em;color:#ffffff;margin-bottom:0;}
+.bcard-headline-zone{padding:22px 26px 18px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.bcard-section-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;opacity:.6;}
+.bcard-headline{font-family:'Fraunces',serif;font-size:clamp(18px,2.5vw,23px);font-weight:700;line-height:1.3;letter-spacing:-.025em;color:#ffffff;margin-bottom:0;}
 
 /* KEY INSIGHTS ZONE */
-.bcard-insights-zone{padding:20px 28px;border-bottom:1px solid rgba(255,255,255,0.06);}
-.bcard-insights-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:14px;}
+.bcard-insights-zone{padding:18px 26px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.bcard-insights-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:12px;}
 .bcard-insights-list{list-style:none;display:flex;flex-direction:column;gap:0;}
-.bcard-insights-list li{font-size:14px;line-height:1.85;color:var(--txt2);padding:10px 0 10px 22px;border-bottom:1px solid rgba(255,255,255,0.05);position:relative;letter-spacing:0.01em;}
+.bcard-insights-list li{font-size:13.5px;line-height:1.8;color:rgba(255,255,255,0.65);padding:9px 0 9px 20px;border-bottom:1px solid rgba(255,255,255,0.04);position:relative;letter-spacing:0.005em;}
 .bcard-insights-list li:last-child{border-bottom:none;padding-bottom:0;}
-.bcard-insights-list li::before{content:'';position:absolute;left:0;top:17px;width:7px;height:7px;border-radius:50%;background:var(--bcolor,#fff);opacity:.7;}
+.bcard-insights-list li::before{content:'';position:absolute;left:0;top:16px;width:6px;height:6px;border-radius:50%;background:var(--bcolor,#fff);opacity:.6;}
 @media(max-width:600px){
   .bcard-insights-list li{font-size:13.5px;line-height:1.8;}
 }
@@ -385,7 +403,7 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
 <div id="app" style="display:none;">
   <nav class="nav">
     <div class="nav-brand" onclick="showHome()">
-      <div class="nav-dot"></div>Finance Intelligence
+      <div class="nav-dot"></div>Finance Intelligence <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:.15em;margin-left:6px;vertical-align:middle;">SMBC</span>
     </div>
     <div class="nav-r">
       <div class="nav-name">Hi, <b id="navN">—</b></div>
@@ -401,26 +419,206 @@ input.inp:focus{border-color:var(--gold);background:rgba(212,168,67,0.05);box-sh
   <div id="pgHome">
     <div class="home-hero">
       <div class="home-hero-inner">
-        <div class="home-greeting">Daily Intelligence Platform</div>
+        <div class="home-greeting">SMBC Indonesia · Finance Intelligence</div>
         <div class="home-title"><span id="homeGreetWord">Good morning,</span><br><em id="homeN">—</em></div>
-        <div class="home-sub">Choose a topic below to load your personalized intelligence briefing. Each section is focused, deep, and tailored for Indonesian finance professionals.</div>
+        <div class="home-sub">Your AI-powered daily briefing platform. Select an intelligence channel below — each delivers a fresh, data-driven brief in under 60 seconds.</div>
         <div class="home-meta">
-          <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--green)"></div>9 Topics Available</div>
-          <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--gold)"></div>Claude AI · Anthropic</div>
-          <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--blue)"></div><span id="homeClock">--:--</span></div>
+          <div class="home-meta-item"><div class="home-meta-dot" style="background:var(--gold)"></div>9 Intelligence Channels</div>
+          <div class="home-meta-item"><div class="home-meta-dot" style="background:#00d4aa"></div>Claude AI · Anthropic</div>
+          <div class="home-meta-item"><div class="home-meta-dot" style="background:rgba(255,255,255,0.3)"></div><span id="homeClock">--:--</span> WIB</div>
         </div>
       </div>
     </div>
     <div class="topic-grid">
-      <div class="t-ai"><div class="topic-card" onclick="openTopic('ai')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🤖</div><div class="topic-tag">TECHNOLOGY</div></div><div class="topic-name">AI for Leaders</div><div class="topic-desc">How artificial intelligence is reshaping banking, fintech, workforce, and leadership strategy — with Indonesia-specific context and actionable insights.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
-      <div class="t-fin"><div class="topic-card" onclick="openTopic('fin')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🏦</div><div class="topic-tag">INDUSTRY</div></div><div class="topic-name">Banking &amp; Finance</div><div class="topic-desc">Key developments in global and Indonesian banking, OJK regulations, digital banking trends, credit markets, and financial product innovation.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
-      <div class="t-eco"><div class="topic-card" onclick="openTopic('eco')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">📈</div><div class="topic-tag">MACRO</div></div><div class="topic-name">Indonesia Economy</div><div class="topic-desc">Bank Indonesia monetary policy, Rupiah movements, inflation signals, GDP growth, trade balance, and macro trends affecting the financial sector.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
-      <div class="t-led"><div class="topic-card" onclick="openTopic('led')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🎯</div><div class="topic-tag">GROWTH</div></div><div class="topic-name">Strategy &amp; Leadership</div><div class="topic-desc">Modern leadership frameworks, team management, organizational design, career positioning, and strategic thinking for finance professionals in 2026.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
-      <div class="t-geo"><div class="topic-card" onclick="openTopic('geo')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🌐</div><div class="topic-tag">GLOBAL</div></div><div class="topic-name">Geopolitics</div><div class="topic-desc">Global power shifts, US-China tensions, ASEAN developments, trade wars, sanctions, and geopolitical risks that directly impact Indonesian banking and investment.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
-      <div class="t-idn"><div class="topic-card" onclick="openTopic('idn')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🇮🇩</div><div class="topic-tag">INDONESIA</div></div><div class="topic-name">Indonesia Updates</div><div class="topic-desc">Latest Indonesian government policy, cabinet decisions, OJK regulatory changes, major business developments, and domestic opportunities for finance professionals.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
-      <div class="t-sdf"><div class="topic-card" onclick="openTopic('sdf')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🚀</div><div class="topic-tag">PERSONAL</div></div><div class="topic-name">Self-Development</div><div class="topic-desc">Habits, mindset, productivity systems, learning strategies, and career growth tactics specifically for ambitious finance and banking professionals.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
-      <div class="t-smbc"><div class="topic-card" onclick="openTopic('smbc')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🏢</div><div class="topic-tag">SMBC GROUP</div></div><div class="topic-name">SMBC Group Updates</div><div class="topic-desc">Latest developments across SMBC Indonesia, SMBC Group, SMFG, OTO Finance, Summit OTO Finance — strategy, performance, and regulatory moves.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
-      <div class="t-aiworld"><div class="topic-card" onclick="openTopic('aiworld')"><div class="topic-card-bg"></div><div class="topic-card-border"></div><div class="topic-card-inner"><div class="topic-card-top"><div class="topic-icon-wrap">🌍</div><div class="topic-tag">AI GLOBAL</div></div><div class="topic-name">AI World News</div><div class="topic-desc">Latest from OpenAI, Google, Anthropic, Meta and global AI leaders — with direct implications for Indonesian banking and financial services.</div><div class="topic-cta"><div class="topic-cta-txt">View Briefing</div><div class="topic-arrow">→</div></div></div></div></div>
+      <div class="t-ai"><div class="topic-card" onclick="openTopic('ai')">
+        <div class="topic-card-topbar"></div>
+        <div class="topic-card-border"></div>
+        <div class="topic-card-inner">
+          <div class="topic-card-head">
+            <div class="topic-card-left">
+              <div class="topic-tag">Technology</div>
+              <div class="topic-icon-wrap">🤖</div>
+            </div>
+            <div class="topic-card-index">01</div>
+          </div>
+          
+          <div class="topic-name">AI for Leaders</div>
+          <div class="topic-data-row"><div class="topic-data-item"><div class="topic-data-val">LLM</div><div class="topic-data-lbl">Models</div></div><div class="topic-data-item"><div class="topic-data-val">RegTech</div><div class="topic-data-lbl">Compliance</div></div><div class="topic-data-item"><div class="topic-data-val">Agents</div><div class="topic-data-lbl">Automation</div></div></div>
+          <div class="topic-desc">How AI is reshaping banking, fintech, workforce strategy and leadership — with deep Indonesia context and actionable insights.</div>
+          <div class="topic-cta">
+            <div class="topic-cta-txt"><div class="topic-live-dot"></div>AI Briefing</div>
+            <div class="topic-arrow">→</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="t-fin"><div class="topic-card" onclick="openTopic('fin')">
+        <div class="topic-card-topbar"></div>
+        <div class="topic-card-border"></div>
+        <div class="topic-card-inner">
+          <div class="topic-card-head">
+            <div class="topic-card-left">
+              <div class="topic-tag">Industry · Featured</div>
+              <div class="topic-icon-wrap">🏦</div>
+            </div>
+            <div class="topic-card-index">02</div>
+          </div>
+          
+          <div class="topic-name">Banking &amp; Finance</div>
+          <div class="topic-data-row"><div class="topic-data-item"><div class="topic-data-val">NPL</div><div class="topic-data-lbl">Credit Risk</div></div><div class="topic-data-item"><div class="topic-data-val">NIM</div><div class="topic-data-lbl">Margins</div></div><div class="topic-data-item"><div class="topic-data-val">OJK</div><div class="topic-data-lbl">Regulatory</div></div></div>
+          <div class="topic-desc">Key developments in global and Indonesian banking, OJK regulations, digital banking trends, credit markets and financial product innovation.</div>
+          <div class="topic-cta">
+            <div class="topic-cta-txt"><div class="topic-live-dot"></div>AI Briefing</div>
+            <div class="topic-arrow">→</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="t-eco"><div class="topic-card" onclick="openTopic('eco')">
+        <div class="topic-card-topbar"></div>
+        <div class="topic-card-border"></div>
+        <div class="topic-card-inner">
+          <div class="topic-card-head">
+            <div class="topic-card-left">
+              <div class="topic-tag">Macro</div>
+              <div class="topic-icon-wrap">📈</div>
+            </div>
+            <div class="topic-card-index">03</div>
+          </div>
+          
+          <div class="topic-name">Indonesia Economy</div>
+          <div class="topic-data-row"><div class="topic-data-item"><div class="topic-data-val">BI Rate</div><div class="topic-data-lbl">Policy</div></div><div class="topic-data-item"><div class="topic-data-val">Rupiah</div><div class="topic-data-lbl">FX</div></div><div class="topic-data-item"><div class="topic-data-val">GDP</div><div class="topic-data-lbl">Growth</div></div></div>
+          <div class="topic-desc">Bank Indonesia monetary policy, Rupiah movements, inflation signals, GDP growth and macro trends affecting the financial sector.</div>
+          <div class="topic-cta">
+            <div class="topic-cta-txt"><div class="topic-live-dot"></div>AI Briefing</div>
+            <div class="topic-arrow">→</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="t-led"><div class="topic-card" onclick="openTopic('led')">
+        <div class="topic-card-topbar"></div>
+        <div class="topic-card-border"></div>
+        <div class="topic-card-inner">
+          <div class="topic-card-head">
+            <div class="topic-card-left">
+              <div class="topic-tag">Growth</div>
+              <div class="topic-icon-wrap">🎯</div>
+            </div>
+            <div class="topic-card-index">04</div>
+          </div>
+          
+          <div class="topic-name">Strategy &amp; Leadership</div>
+          <div class="topic-data-row"><div class="topic-data-item"><div class="topic-data-val">Strategy</div><div class="topic-data-lbl">Frameworks</div></div><div class="topic-data-item"><div class="topic-data-val">Team</div><div class="topic-data-lbl">Development</div></div></div>
+          <div class="topic-desc">Modern leadership frameworks, team management, organizational design, career positioning and strategic thinking for finance professionals.</div>
+          <div class="topic-cta">
+            <div class="topic-cta-txt"><div class="topic-live-dot"></div>AI Briefing</div>
+            <div class="topic-arrow">→</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="t-geo"><div class="topic-card" onclick="openTopic('geo')">
+        <div class="topic-card-topbar"></div>
+        <div class="topic-card-border"></div>
+        <div class="topic-card-inner">
+          <div class="topic-card-head">
+            <div class="topic-card-left">
+              <div class="topic-tag">Global</div>
+              <div class="topic-icon-wrap">🌐</div>
+            </div>
+            <div class="topic-card-index">05</div>
+          </div>
+          
+          <div class="topic-name">Geopolitics</div>
+          <div class="topic-data-row"><div class="topic-data-item"><div class="topic-data-val">US-China</div><div class="topic-data-lbl">Tensions</div></div><div class="topic-data-item"><div class="topic-data-val">ASEAN</div><div class="topic-data-lbl">Regional</div></div></div>
+          <div class="topic-desc">Global power shifts, US-China tensions, ASEAN developments, trade wars and geopolitical risks impacting Indonesian banking.</div>
+          <div class="topic-cta">
+            <div class="topic-cta-txt"><div class="topic-live-dot"></div>AI Briefing</div>
+            <div class="topic-arrow">→</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="t-idn"><div class="topic-card" onclick="openTopic('idn')">
+        <div class="topic-card-topbar"></div>
+        <div class="topic-card-border"></div>
+        <div class="topic-card-inner">
+          <div class="topic-card-head">
+            <div class="topic-card-left">
+              <div class="topic-tag">Indonesia</div>
+              <div class="topic-icon-wrap">🇮🇩</div>
+            </div>
+            <div class="topic-card-index">06</div>
+          </div>
+          
+          <div class="topic-name">Indonesia Updates</div>
+          <div class="topic-data-row"><div class="topic-data-item"><div class="topic-data-val">OJK</div><div class="topic-data-lbl">Policy</div></div><div class="topic-data-item"><div class="topic-data-val">Prabowo</div><div class="topic-data-lbl">Cabinet</div></div></div>
+          <div class="topic-desc">Latest Indonesian government policy, cabinet decisions, OJK regulatory changes and major business developments.</div>
+          <div class="topic-cta">
+            <div class="topic-cta-txt"><div class="topic-live-dot"></div>AI Briefing</div>
+            <div class="topic-arrow">→</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="t-sdf"><div class="topic-card" onclick="openTopic('sdf')">
+        <div class="topic-card-topbar"></div>
+        <div class="topic-card-border"></div>
+        <div class="topic-card-inner">
+          <div class="topic-card-head">
+            <div class="topic-card-left">
+              <div class="topic-tag">Personal</div>
+              <div class="topic-icon-wrap">🚀</div>
+            </div>
+            <div class="topic-card-index">07</div>
+          </div>
+          
+          <div class="topic-name">Self-Development</div>
+          <div class="topic-data-row"><div class="topic-data-item"><div class="topic-data-val">Habits</div><div class="topic-data-lbl">Performance</div></div><div class="topic-data-item"><div class="topic-data-val">Skills</div><div class="topic-data-lbl">Growth</div></div></div>
+          <div class="topic-desc">Habits, mindset, productivity systems and career growth tactics for ambitious finance and banking professionals.</div>
+          <div class="topic-cta">
+            <div class="topic-cta-txt"><div class="topic-live-dot"></div>AI Briefing</div>
+            <div class="topic-arrow">→</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="t-smbc"><div class="topic-card" onclick="openTopic('smbc')">
+        <div class="topic-card-topbar"></div>
+        <div class="topic-card-border"></div>
+        <div class="topic-card-inner">
+          <div class="topic-card-head">
+            <div class="topic-card-left">
+              <div class="topic-tag">SMBC Group</div>
+              <div class="topic-icon-wrap">🏢</div>
+            </div>
+            <div class="topic-card-index">08</div>
+          </div>
+          <div class="t-smbc-badge">Internal · SMBC Group</div>
+          <div class="topic-name">SMBC Group Updates</div>
+          <div class="topic-data-row"><div class="topic-data-item"><div class="topic-data-val">SMFG</div><div class="topic-data-lbl">Group</div></div><div class="topic-data-item"><div class="topic-data-val">OTO</div><div class="topic-data-lbl">Finance</div></div></div>
+          <div class="topic-desc">SMBC Indonesia, SMBC Group, SMFG, OTO Finance and Summit OTO Finance — strategy, performance and regulatory moves.</div>
+          <div class="topic-cta">
+            <div class="topic-cta-txt"><div class="topic-live-dot"></div>AI Briefing</div>
+            <div class="topic-arrow">→</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="t-aiworld"><div class="topic-card" onclick="openTopic('aiworld')">
+        <div class="topic-card-topbar"></div>
+        <div class="topic-card-border"></div>
+        <div class="topic-card-inner">
+          <div class="topic-card-head">
+            <div class="topic-card-left">
+              <div class="topic-tag">AI Global</div>
+              <div class="topic-icon-wrap">🌍</div>
+            </div>
+            <div class="topic-card-index">09</div>
+          </div>
+          
+          <div class="topic-name">AI World News</div>
+          <div class="topic-data-row"><div class="topic-data-item"><div class="topic-data-val">OpenAI</div><div class="topic-data-lbl">Updates</div></div><div class="topic-data-item"><div class="topic-data-val">Anthropic</div><div class="topic-data-lbl">Research</div></div></div>
+          <div class="topic-desc">Latest from OpenAI, Google, Anthropic and global AI leaders — with direct implications for Indonesian banking and finance.</div>
+          <div class="topic-cta">
+            <div class="topic-cta-txt"><div class="topic-live-dot"></div>AI Briefing</div>
+            <div class="topic-arrow">→</div>
+          </div>
+        </div>
+      </div></div>
     </div>
   </div>
 
